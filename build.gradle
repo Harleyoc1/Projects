@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+ext.configFile = file "gradle.properties"
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    ext.config = new ConfigSlurper().parse prop
+}
+
+group config.package_group
+version config.version
+
+group config.package_group
+version config.version
+mainClassName = "${group}.${config.main_class_name}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+// Use JavaFX version 16, with javafx controls module.
+javafx {
+    version = "16"
+    modules = [ 'javafx.controls' ]
+}
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name 'Harley O\'Connor Maven'
+        allowInsecureProtocol = true
+        url 'http://harleyoconnor.com/maven/'
+    }
+    maven {
+        url "https://libraries.minecraft.net"
+    }
+}
+
+dependencies {
+    // Include MariaDB drivers.
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: config.mariadb_java_client_version
+
+    // Gives access to javax.annotation.Nullable.
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: config.findbugs_version
+
+    // Java Utilities - my own miscellaneous utility classes.
+    implementation group: 'com.harleyoconnor.javautilities', name: 'JavaUtilities', version: config.javautilities_version
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: config.junit_version
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
