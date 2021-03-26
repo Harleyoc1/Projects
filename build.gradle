@@ -34,17 +34,14 @@ repositories {
         allowInsecureProtocol = true
         url 'http://harleyoconnor.com/maven/'
     }
-    maven {
-        url "https://libraries.minecraft.net"
-    }
 }
 
 dependencies {
+    // Include Guava, has some useful things like ImmutableCollection.
+    implementation group: 'com.google.guava', name: 'guava', version: config.guava_version
+
     // Include MariaDB drivers.
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: config.mariadb_java_client_version
-
-    // Gives access to javax.annotation.Nullable.
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: config.findbugs_version
 
     // Java Utilities - my own miscellaneous utility classes.
     implementation group: 'com.harleyoconnor.javautilities', name: 'JavaUtilities', version: config.javautilities_version

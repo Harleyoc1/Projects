@@ -1,11 +1,10 @@
 package com.harleyoconnor.projects;
 
+import com.harleyoconnor.projects.objects.Employee;
+import com.harleyoconnor.projects.serialisation.util.SQLHelper;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.logging.Logger;
 
 /**
@@ -17,15 +16,13 @@ public final class Projects extends Application {
     private static final DatabaseController DATABASE_CONTROLLER;
 
     static {
-        final Logger logger = Logger.getLogger("Loading");
+        DATABASE_CONTROLLER = new DatabaseController(SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT, DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
 
-        try {
-            DATABASE_CONTROLLER = new DatabaseController(DriverManager.getConnection("jdbc:mariadb://" + DatabaseConstants.IP + ":" + DatabaseConstants.PORT + "/" + DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
-        } catch (final SQLException e) {
-            logger.severe("Could not connect to database.");
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+        Employee.SER_DES.getFields();
+
+        final Employee employee = Employee.fromEmail("harleyoc1@gmail.com");
+        final Employee sameEmployee = Employee.fromEmail("harleyoc1@gmail.com");
+        LOADING_LOGGER.info(employee.equals(sameEmployee) + " Hash Codes: " + employee.hashCode() + " " + sameEmployee.hashCode());
     }
 
     @Override
