@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 /**
  * Implementations will handle serialising and deserialising an {@link Object} of
- * type {@link T} to and from an SQL database.
+ * type {@link T} to and from an SQL table.
  *
  * <p>Implementations will typically contain a {@link Set} of {@link Field} objects,
  * which will both represent a {@link java.lang.reflect.Field} in the Java
@@ -57,25 +57,32 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
     PrimaryField<T, PK> getPrimaryField();
 
     /**
+     * Gets a {@link Set} of all currently loaded {@link Object}s of type {@link T}.
+     *
+     * @return A {@link Set} of loaded {@link Object}s of type {@link T}.
+     */
+    Set<T> getLoadedObjects();
+
+    /**
      * Gets all {@link Field} objects for {@link T} as a {@link Collection}.
      *
      * @return A {@link Collection} of {@link Field} objects.
      */
-    Collection<Field<T, ?>> getFields();
+    Set<Field<T, ?>> getFields();
 
     /**
      * Gets all {@link ImmutableField} objects for {@link T} as a {@link Collection}.
      *
      * @return A {@link Collection} of {@link ImmutableField} objects.
      */
-    Collection<ImmutableField<T, ?>> getImmutableFields();
+    Set<ImmutableField<T, ?>> getImmutableFields();
 
     /**
      * Gets all {@link ForeignField} objects for this {@link SerDes}.
      *
      * @return A {@link Collection} of {@link ForeignField} objects for this {@link SerDes}.
      */
-    Collection<ForeignField<T, ?, ?>> getForeignFields();
+    Set<ForeignField<T, ?, ?>> getForeignFields();
 
     /**
      * Serialises the given {@code object} of type {@link T}, writing the
@@ -119,7 +126,11 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
      * @return The deserialised {@link Object} of type {@link T}.
      */
     default T deserialise (final PK primaryKeyValue) {
-        return this.deserialise(this.getResultSet(primaryKeyValue));
+        return this.getLoadedObjects().stream().filter(serDesable -> this.getPrimaryField().get(serDesable).equals(primaryKeyValue)).findFirst().orElseGet(() -> this.deserialise(this.getResultSet(primaryKeyValue)));
+    }
+
+    default T deserialise(final ResultSet resultSet) {
+        return this.deserialise(resultSet, this.currentlyDeserialising());
     }
 
     /**
@@ -127,9 +138,12 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
      * obtained from the given {@link ResultSet}.
      *
      * @param resultSet The {@link ResultSet} to deserialise from.
+     * @param careful {@code true} if {@link ForeignField} objects shouldn't be
+     *                            set until after its {@link SerDes} is finished
+     *                            deserialising (to avoid infinite loops).
      * @return The deserialised {@code object} of type {@link T}.
      */
-    T deserialise (final ResultSet resultSet);
+    T deserialise (final ResultSet resultSet, final boolean careful);
 
     /**
      * A careful version of {@link #deserialise(ResultSet)} which doesn't set
@@ -145,6 +159,16 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
      */
     T deserialiseCareful(final ResultSet resultSet);
 
+    /**
+     * Converts the given {@link SerDesable} of type {@link T} into a {@link String}
+     * representation, including all its {@link Field}s in the following format:
+     * <br>
+     *
+     * <pre>SimpleClassName{fieldName=fieldValue, anotherFieldName=anotherFieldValue}</pre>
+     *
+     * @param serDesable The {@link Object} of type {@link T} to convert to a {@link String}.
+     * @return The formatted {@link String} representation.
+     */
     default String toString(final T serDesable) {
         final StringBuilder stringBuilder = new StringBuilder(this.getType().getSimpleName()).append("{");
 

@@ -22,6 +22,15 @@ public interface ForeignField<P extends SerDesable<P, ?>, T, FKT extends SerDesa
     Field<FKT, T> getForeignField();
 
     /**
+     * Gets the actual object of the {@link Field}, of type {@link FKT}, from the given
+     * {@link SerDesable} of type {@link P}.
+     *
+     * @param object The {@code object} of type {@link P} to get the {@code field} for.
+     * @return The actual value of the {@link Field}, of type {@link FKT}.
+     */
+    FKT getActual(P object);
+
+    /**
      * Gets an {@link Object} of type {@link FKT} from the {@code value} of type {@link T}
      * given.
      *

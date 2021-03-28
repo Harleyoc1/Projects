@@ -4,11 +4,8 @@ import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.AbstractSerDesable;
 import com.harleyoconnor.projects.serialisation.ClassSerDes;
 import com.harleyoconnor.projects.serialisation.SerDes;
-import com.harleyoconnor.projects.serialisation.SerDesable;
 import com.harleyoconnor.projects.serialisation.fields.Field;
 import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
-
-import java.util.Objects;
 
 /**
  * @author Harley O'Connor
@@ -26,7 +23,8 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
             .foreignField("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
 
     public static Employee fromEmail(final String email) {
-        return SER_DES.deserialise(Projects.getDatabaseController().select(SER_DES.getTable(), "email", email));
+        return SER_DES.getLoadedObjects().stream().filter(employee -> employee.getEmail().equals(email)).findFirst()
+                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().select(SER_DES.getTable(), "email", email)));
     }
 
     private final int id;

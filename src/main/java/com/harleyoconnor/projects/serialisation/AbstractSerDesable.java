@@ -1,9 +1,8 @@
 package com.harleyoconnor.projects.serialisation;
 
 import com.harleyoconnor.projects.serialisation.fields.Field;
+import com.harleyoconnor.projects.serialisation.fields.ForeignField;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -47,9 +46,9 @@ public abstract class AbstractSerDesable<T extends SerDesable<T, PK>, PK> implem
 
     @Override
     public int hashCode() {
-        final Collection<Object> objects = new ArrayList<>();
-        this.getSerDes().getFields().forEach(field -> objects.add(field.get((T) this)));
-        return Objects.hash(objects.toArray());
+        return Objects.hash(this.getSerDes().getFields().stream()
+                .filter(field -> !(field instanceof ForeignField && ((ForeignField<T, ?, ?>) field).getActual((T) this) == null))
+                .map(field -> field.get((T) this)).toArray());
     }
 
 }

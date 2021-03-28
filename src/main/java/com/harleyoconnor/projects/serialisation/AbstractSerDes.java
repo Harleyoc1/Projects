@@ -34,7 +34,10 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     protected final String table;
     protected final PrimaryField<T, PK> primaryField;
 
-    private final List<Consumer<T>> nextDeserialisedResultConsumers = new ArrayList<>();
+    // TODO: A way of automatic unloading these (maybe add a WeakHashSet to JavaUtilities?)
+    protected final Set<T> loadedObjects = new HashSet<>();
+
+    protected final List<Consumer<T>> nextDeserialisedResultConsumers = new ArrayList<>();
     private boolean currentlyDeserialising;
 
     public AbstractSerDes(Class<T> type, String table, PrimaryField<T, PK> primaryField) {
@@ -60,8 +63,13 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<ForeignField<T, ?, ?>> getForeignFields() {
-        return this.getFields().stream().filter(field -> field instanceof ForeignField).map(field -> ((ForeignField<T, ?, ?>) field)).collect(Collectors.toUnmodifiableList());
+    public Set<ForeignField<T, ?, ?>> getForeignFields() {
+        return this.getFields().stream().filter(field -> field instanceof ForeignField).map(field -> ((ForeignField<T, ?, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public Set<T> getLoadedObjects() {
+        return this.loadedObjects;
     }
 
     @Override
@@ -80,7 +88,7 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     }
 
     @Override
-    public T deserialise(ResultSet resultSet) {
+    public T deserialise(ResultSet resultSet, boolean careful) {
         this.currentlyDeserialising = true;
 
         final Collection<ImmutableField<T, ?>> requiredFields = this.getImmutableFields();
@@ -98,13 +106,28 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
             requiredFields.forEach(field ->
                     args.add(ResultSetConversions.getValueUnsafe(resultSet, field.getName(), field.getFieldType())));
 
-            return this.finaliseDeserialisation(resultSet, constructor.newInstance(args.toArray()));
+            final T constructedObject = constructor.newInstance(args.toArray());
+
+            this.loadedObjects.add(constructedObject);
+
+            return this.finaliseDeserialisation(resultSet, constructedObject, careful);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected T finaliseDeserialisation (ResultSet resultSet, T constructedObject) {
+    /**
+     * Finalises deserialisation by running additional tasks after an {@link Object}
+     * of type {@link T} has been constructed.
+     *
+     * @param resultSet The {@link ResultSet} the {@code constructedObject} was deserialised from.
+     * @param constructedObject The constructed {@link Object} of type {@link T}.
+     * @param careful {@code true} if {@link ForeignField} objects shouldn't be
+     *                            set until after its {@link SerDes} is finished
+     *                            deserialising (to avoid infinite loops).
+     * @return The constructed {@code constructedObject} for in-line calls.
+     */
+    protected T finaliseDeserialisation (ResultSet resultSet, T constructedObject, boolean careful) {
         this.currentlyDeserialising = false;
 
         this.nextDeserialisedResultConsumers.forEach(consumer -> consumer.accept(constructedObject));

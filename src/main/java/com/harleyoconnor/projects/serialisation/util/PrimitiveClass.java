@@ -2,24 +2,23 @@ package com.harleyoconnor.projects.serialisation.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * @author Harley O'Connor
  */
 public final class PrimitiveClass {
 
-    private static final Map<Class<?>, Supplier<Class<?>>> PRIMITIVE_CLASS_SUPPLIERS = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_CLASSES = new HashMap<>();
 
     static {
-        PRIMITIVE_CLASS_SUPPLIERS.put(Boolean.class, () -> Boolean.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Byte.class, () -> Byte.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Short.class, () -> Short.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Integer.class, () -> Integer.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Long.class, () -> Long.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Float.class, () -> Float.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Double.class, () -> Double.TYPE);
-        PRIMITIVE_CLASS_SUPPLIERS.put(Character.class, () -> Character.TYPE);
+        PRIMITIVE_CLASSES.put(Boolean.class, Boolean.TYPE);
+        PRIMITIVE_CLASSES.put(Byte.class, Byte.TYPE);
+        PRIMITIVE_CLASSES.put(Short.class, Short.TYPE);
+        PRIMITIVE_CLASSES.put(Integer.class, Integer.TYPE);
+        PRIMITIVE_CLASSES.put(Long.class, Long.TYPE);
+        PRIMITIVE_CLASSES.put(Float.class, Float.TYPE);
+        PRIMITIVE_CLASSES.put(Double.class, Double.TYPE);
+        PRIMITIVE_CLASSES.put(Character.class, Character.TYPE);
     }
 
     /**
@@ -30,7 +29,7 @@ public final class PrimitiveClass {
      * @return {@code true} if it can be converted; {@code false} otherwise.
      */
     public static boolean convertible(final Class<?> clazz) {
-        return PRIMITIVE_CLASS_SUPPLIERS.containsKey(clazz);
+        return PRIMITIVE_CLASSES.containsKey(clazz);
     }
 
     /**
@@ -42,7 +41,7 @@ public final class PrimitiveClass {
      *         given {@link Class}.
      */
     public static Class<?> convert(final Class<?> clazz) {
-        return PRIMITIVE_CLASS_SUPPLIERS.getOrDefault(clazz, () -> clazz).get();
+        return PRIMITIVE_CLASSES.getOrDefault(clazz, clazz);
     }
 
 }

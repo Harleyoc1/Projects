@@ -3,7 +3,8 @@ package com.harleyoconnor.projects.serialisation;
 /**
  * An interface used to indicate that a class declaration has a {@link SerDes}
  * associated for serialising and deserialising it. Classes will need to implement
- * this to create a {@link SerDes}.
+ * this to create a {@link SerDes}, and should return it via an implementation of
+ * {@link #getSerDes()}.
  *
  * <p>The {@link SerDes} instance will usually be stored in the relevant class as a
  * {@code final}, {@code static} field with {@code public} access.</p>

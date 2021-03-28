@@ -22,7 +22,7 @@ public final class SerDesRegistry {
     /** The {@link Set} of {@link SerDes} objects registered. */
     private static final Set<SerDes<?, ?>> serDesables = new HashSet<>();
 
-    public static <T extends SerDesable<T, ?>> SerDes<T, ?> getUnsafe (final Class<T> serDesableClass) {
+    public static <T extends SerDesable<T, ?>> SerDes<T, ?> getUnsafe (final Class<T> serDesableClass) throws NoSuchSerDesException {
         final Optional<SerDes<T, ?>> optionalSerDes = get(serDesableClass);
 
         if (optionalSerDes.isEmpty())

@@ -35,7 +35,7 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
     }
 
     @Override
-    public Collection<Field<T, ?>> getFields() {
+    public Set<Field<T, ?>> getFields() {
         return fields;
     }
 
@@ -46,8 +46,8 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<ImmutableField<T, ?>> getImmutableFields() {
-        return this.fields.stream().filter(field -> field instanceof ImmutableField).map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toUnmodifiableList());
+    public Set<ImmutableField<T, ?>> getImmutableFields() {
+        return this.fields.stream().filter(field -> field instanceof ImmutableField).map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -56,26 +56,14 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
     }
 
     @Override
-    protected T finaliseDeserialisation(ResultSet resultSet, T constructedObject) {
+    protected T finaliseDeserialisation(ResultSet resultSet, T constructedObject, boolean careful) {
         this.getMutableFields().forEach(mutableField -> this.setField(resultSet, constructedObject, mutableField));
 
-        if (!this.careful)
+        if (!careful)
             this.getForeignFields().forEach(foreignField -> this.setField(resultSet, constructedObject, foreignField));
+        else this.getForeignFields().forEach(foreignField -> foreignField.getParentSerDes().get().whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(constructedObject, deserialisedObject, foreignField)));
 
-        return super.finaliseDeserialisation(resultSet, constructedObject);
-    }
-
-    private boolean careful = false;
-
-    @Override
-    public T deserialiseCareful(ResultSet resultSet) {
-        this.careful = true;
-        final T object = this.deserialise(resultSet);
-        this.careful = false;
-
-        this.getForeignFields().forEach(foreignField -> foreignField.getParentSerDes().get().whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(object, deserialisedObject, foreignField)));
-
-        return object;
+        return super.finaliseDeserialisation(resultSet, constructedObject, careful);
     }
 
     @SuppressWarnings("unchecked")

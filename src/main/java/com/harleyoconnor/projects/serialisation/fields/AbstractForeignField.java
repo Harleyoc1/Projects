@@ -45,7 +45,12 @@ public abstract class AbstractForeignField<P extends SerDesable<P, ?>, T, FKT ex
 
     @Override
     public T get(P object) {
-        return this.foreignField.get(this.getter.apply(object));
+        return this.foreignField.get(this.getActual(object));
+    }
+
+    @Override
+    public FKT getActual(P object) {
+        return this.getter.apply(object);
     }
 
     @Override
@@ -54,19 +59,11 @@ public abstract class AbstractForeignField<P extends SerDesable<P, ?>, T, FKT ex
            for the foreign field, and if not that is a misuse of the API. */
         final SerDes<FKT, ?> serDes = SerDesRegistry.getUnsafe(this.foreignField.getParentType());
 
-        // Selects the result set from the database based on the given value.
-        final ResultSet resultSet = Projects.getDatabaseController().select(serDes.getTable(), this.foreignField.getName(), value);
-
-        final FKT deserialisedObject;
-
-        /* If the SerDes is currently deserialising an object, call the careful deserialise method
-           (which queues foreign fields until after the currently field has loaded to prevent infinite
-           loops). */
-        if (serDes.currentlyDeserialising())
-            deserialisedObject = serDes.deserialiseCareful(resultSet);
-        else deserialisedObject = serDes.deserialise(resultSet);
-
-        return deserialisedObject;
+        // Either obtain the object from the currently loaded objects for that SerDes or deserialise it.
+        return serDes.getLoadedObjects().stream().filter(object -> this.foreignField.get(object).equals(value)).findFirst().orElseGet(() -> {
+            // Selects the result set from the database based on the given value.
+            return serDes.deserialise(Projects.getDatabaseController().select(serDes.getTable(), this.foreignField.getName(), value));
+        });
     }
 
 }

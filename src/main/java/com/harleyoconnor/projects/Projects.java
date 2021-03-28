@@ -20,9 +20,12 @@ public final class Projects extends Application {
 
         Employee.SER_DES.getFields();
 
-        final Employee employee = Employee.fromEmail("harleyoc1@gmail.com");
-        final Employee sameEmployee = Employee.fromEmail("harleyoc1@gmail.com");
-        LOADING_LOGGER.info(employee.equals(sameEmployee) + " Hash Codes: " + employee.hashCode() + " " + sameEmployee.hashCode());
+        final var employee = Employee.fromEmail("thisisntmyactualemail@harleyImoconnor.com");
+        final var sameEmployee = Employee.fromEmail("thisisntmyactualemail@harleyoconnor.com");
+
+        System.out.println(employee.getDepartment().getHead().getDepartment().getHead().getDepartment().getId());
+
+        LOADING_LOGGER.info(employee.toString() + " " + employee.equals(sameEmployee) + " Hash Codes: " + employee.hashCode() + " " + sameEmployee.hashCode());
     }
 
     @Override

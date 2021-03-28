@@ -5,7 +5,6 @@ import com.harleyoconnor.projects.serialisation.fields.Field;
 import com.harleyoconnor.projects.serialisation.fields.ImmutableField;
 import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,12 +31,12 @@ public final class RecordSerDes<T extends Record & SerDesable<T, PK>, PK> extend
     }
 
     @Override
-    public Collection<Field<T, ?>> getFields() {
+    public Set<Field<T, ?>> getFields() {
         return ImmutableSet.copyOf(this.fields);
     }
 
     @Override
-    public Collection<ImmutableField<T, ?>> getImmutableFields() {
+    public Set<ImmutableField<T, ?>> getImmutableFields() {
         return this.fields;
     }
 
