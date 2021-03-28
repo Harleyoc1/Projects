@@ -1,15 +1,13 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.harleyoconnor.projects.serialisation.fields.Field;
-import com.harleyoconnor.projects.serialisation.fields.ForeignField;
-import com.harleyoconnor.projects.serialisation.fields.ImmutableField;
-import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
+import com.harleyoconnor.projects.serialisation.fields.*;
 
 import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Implementations will handle serialising and deserialising an {@link Object} of
@@ -64,25 +62,41 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
     Set<T> getLoadedObjects();
 
     /**
-     * Gets all {@link Field} objects for {@link T} as a {@link Collection}.
+     * Gets all {@link Field} objects for {@link T} as a {@link Set}.
      *
-     * @return A {@link Collection} of {@link Field} objects.
+     * @return A {@link Set} of {@link Field} objects for this {@link SerDes}.
      */
     Set<Field<T, ?>> getFields();
 
     /**
-     * Gets all {@link ImmutableField} objects for {@link T} as a {@link Collection}.
+     * Gets all {@link MutableField} objects for {@link T} as a {@link Set}.
      *
-     * @return A {@link Collection} of {@link ImmutableField} objects.
+     * @return A {@link Set} of {@link MutableField} objects for this {@link SerDes}.
      */
-    Set<ImmutableField<T, ?>> getImmutableFields();
+    @SuppressWarnings("unchecked")
+    default Set<MutableField<T, ?>> getMutableFields() {
+        return this.getFields().stream().filter(field -> field instanceof MutableField).map(field -> ((MutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    }
 
     /**
-     * Gets all {@link ForeignField} objects for this {@link SerDes}.
+     * Gets all {@link ImmutableField} objects for {@link T} as a {@link Set}.
      *
-     * @return A {@link Collection} of {@link ForeignField} objects for this {@link SerDes}.
+     * @return A {@link Set} of {@link ImmutableField} objects for this {@link SerDes}.
      */
-    Set<ForeignField<T, ?, ?>> getForeignFields();
+    @SuppressWarnings("unchecked")
+    default Set<ImmutableField<T, ?>> getImmutableFields() {
+        return this.getFields().stream().filter(field -> field instanceof ImmutableField).map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Gets all {@link ForeignField} objects for {@link T} as a {@link Set}.
+     *
+     * @return A {@link Set} of {@link ForeignField} objects for this {@link SerDes}.
+     */
+    @SuppressWarnings("unchecked")
+    default Set<ForeignField<T, ?, ?>> getForeignFields() {
+        return this.getFields().stream().filter(field -> field instanceof ForeignField).map(field -> ((ForeignField<T, ?, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    }
 
     /**
      * Serialises the given {@code object} of type {@link T}, writing the

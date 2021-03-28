@@ -20,10 +20,11 @@ public final class Projects extends Application {
 
         Employee.SER_DES.getFields();
 
-        final var employee = Employee.fromEmail("thisisntmyactualemail@harleyImoconnor.com");
+        final var employee = Employee.fromEmail("thisisntmyactualemail@harleyoconnor.com");
         final var sameEmployee = Employee.fromEmail("thisisntmyactualemail@harleyoconnor.com");
 
-        System.out.println(employee.getDepartment().getHead().getDepartment().getHead().getDepartment().getId());
+        employee.setPassword("securePassword123");
+        employee.getSerDes().serialise(employee);
 
         LOADING_LOGGER.info(employee.toString() + " " + employee.equals(sameEmployee) + " Hash Codes: " + employee.hashCode() + " " + sameEmployee.hashCode());
     }

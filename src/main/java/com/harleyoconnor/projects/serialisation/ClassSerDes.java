@@ -5,12 +5,10 @@ import com.harleyoconnor.projects.serialisation.fields.*;
 import com.harleyoconnor.projects.serialisation.util.ResultSetConversions;
 
 import java.sql.ResultSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Main implementation of {@link SerDes}, holding an {@link ImmutableSet} of {@link Field}
@@ -39,29 +37,14 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
         return fields;
     }
 
-    @SuppressWarnings("unchecked")
-    public Collection<MutableField<T, ?>> getMutableFields() {
-        return this.fields.stream().filter(field -> field instanceof MutableField).map(field -> ((MutableField<T, ?>) field)).collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Set<ImmutableField<T, ?>> getImmutableFields() {
-        return this.fields.stream().filter(field -> field instanceof ImmutableField).map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
-    }
-
-    @Override
-    public void serialise(T object) {
-        // TODO: Implement serialisation.
-    }
-
     @Override
     protected T finaliseDeserialisation(ResultSet resultSet, T constructedObject, boolean careful) {
         this.getMutableFields().forEach(mutableField -> this.setField(resultSet, constructedObject, mutableField));
 
         if (!careful)
             this.getForeignFields().forEach(foreignField -> this.setField(resultSet, constructedObject, foreignField));
-        else this.getForeignFields().forEach(foreignField -> foreignField.getParentSerDes().get().whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(constructedObject, deserialisedObject, foreignField)));
+        else this.getForeignFields().forEach(foreignField -> foreignField.getParentSerDes().get()
+                .whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(constructedObject, deserialisedObject, foreignField)));
 
         return super.finaliseDeserialisation(resultSet, constructedObject, careful);
     }

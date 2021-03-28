@@ -40,11 +40,6 @@ public final class RecordSerDes<T extends Record & SerDesable<T, PK>, PK> extend
         return this.fields;
     }
 
-    @Override
-    public void serialise(T object) {
-        // TODO: Implement serialisation.
-    }
-
     @SuppressWarnings("unchecked")
     public static class Builder<T extends Record & SerDesable<T, PK>, PK, RSD extends RecordSerDes<T, PK>, B extends Builder<T, PK, RSD, B>> extends AbstractSerDes.Builder<T, PK, RSD, B> {
 

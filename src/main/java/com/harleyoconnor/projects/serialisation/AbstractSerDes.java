@@ -1,5 +1,6 @@
 package com.harleyoconnor.projects.serialisation;
 
+import com.harleyoconnor.javautilities.pair.Pair;
 import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.exceptions.NoSuchConstructorException;
 import com.harleyoconnor.projects.serialisation.fields.Field;
@@ -15,7 +16,6 @@ import java.sql.ResultSet;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * This class provides a skeletal implementation of the {@link SerDes} interface, to minimise the
@@ -62,14 +62,15 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Set<ForeignField<T, ?, ?>> getForeignFields() {
-        return this.getFields().stream().filter(field -> field instanceof ForeignField).map(field -> ((ForeignField<T, ?, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    public Set<T> getLoadedObjects() {
+        return this.loadedObjects;
     }
 
     @Override
-    public Set<T> getLoadedObjects() {
-        return this.loadedObjects;
+    @SuppressWarnings("unchecked")
+    public void serialise(T object) {
+        Projects.getDatabaseController().updateUnsafe(this.table, this.primaryField.getName(), this.primaryField.get(object),
+                (Pair<String, Object>[]) this.getMutableFields().stream().map(field -> Pair.immutable(field.getName(), field.get(object))).toArray(Pair<?, ?>[]::new));
     }
 
     @Override
@@ -84,7 +85,7 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
 
     @Override
     public ResultSet getResultSet(PK primaryKeyValue) {
-        return Projects.getDatabaseController().select(this.table, this.primaryField.getName(), primaryKeyValue);
+        return Projects.getDatabaseController().selectUnsafe(this.table, this.primaryField.getName(), primaryKeyValue);
     }
 
     @Override

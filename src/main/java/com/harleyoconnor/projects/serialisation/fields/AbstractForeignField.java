@@ -62,7 +62,7 @@ public abstract class AbstractForeignField<P extends SerDesable<P, ?>, T, FKT ex
         // Either obtain the object from the currently loaded objects for that SerDes or deserialise it.
         return serDes.getLoadedObjects().stream().filter(object -> this.foreignField.get(object).equals(value)).findFirst().orElseGet(() -> {
             // Selects the result set from the database based on the given value.
-            return serDes.deserialise(Projects.getDatabaseController().select(serDes.getTable(), this.foreignField.getName(), value));
+            return serDes.deserialise(Projects.getDatabaseController().selectUnsafe(serDes.getTable(), this.foreignField.getName(), value));
         });
     }
 

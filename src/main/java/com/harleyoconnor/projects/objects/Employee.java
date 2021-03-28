@@ -24,7 +24,7 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
 
     public static Employee fromEmail(final String email) {
         return SER_DES.getLoadedObjects().stream().filter(employee -> employee.getEmail().equals(email)).findFirst()
-                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().select(SER_DES.getTable(), "email", email)));
+                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().selectUnsafe(SER_DES.getTable(), "email", email)));
     }
 
     private final int id;
