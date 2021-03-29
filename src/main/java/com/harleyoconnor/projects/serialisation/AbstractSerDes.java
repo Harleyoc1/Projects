@@ -1,12 +1,10 @@
 package com.harleyoconnor.projects.serialisation;
 
 import com.harleyoconnor.javautilities.pair.Pair;
+import com.harleyoconnor.projects.DatabaseController;
 import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.exceptions.NoSuchConstructorException;
-import com.harleyoconnor.projects.serialisation.fields.Field;
-import com.harleyoconnor.projects.serialisation.fields.ForeignField;
-import com.harleyoconnor.projects.serialisation.fields.ImmutableField;
-import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
+import com.harleyoconnor.projects.serialisation.fields.*;
 import com.harleyoconnor.projects.serialisation.util.PrimitiveClass;
 import com.harleyoconnor.projects.serialisation.util.ResultSetConversions;
 
@@ -16,6 +14,7 @@ import java.sql.ResultSet;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * This class provides a skeletal implementation of the {@link SerDes} interface, to minimise the
@@ -34,16 +33,19 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     protected final String table;
     protected final PrimaryField<T, PK> primaryField;
 
+    protected final Set<ImmutableField<T, ?>> immutableFields;
+
     // TODO: A way of automatic unloading these (maybe add a WeakHashSet to JavaUtilities?)
     protected final Set<T> loadedObjects = new HashSet<>();
 
     protected final List<Consumer<T>> nextDeserialisedResultConsumers = new ArrayList<>();
     private boolean currentlyDeserialising;
 
-    public AbstractSerDes(Class<T> type, String table, PrimaryField<T, PK> primaryField) {
+    public AbstractSerDes(Class<T> type, String table, PrimaryField<T, PK> primaryField, Set<ImmutableField<T, ?>> immutableFields) {
         this.type = type;
         this.table = table;
         this.primaryField = primaryField;
+        this.immutableFields = immutableFields;
     }
 
     @Override
@@ -67,10 +69,29 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     }
 
     @Override
+    public Set<ImmutableField<T, ?>> getImmutableFields() {
+        return this.immutableFields.stream().collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void serialise(T object) {
-        Projects.getDatabaseController().updateUnsafe(this.table, this.primaryField.getName(), this.primaryField.get(object),
-                (Pair<String, Object>[]) this.getMutableFields().stream().map(field -> Pair.immutable(field.getName(), field.get(object))).toArray(Pair<?, ?>[]::new));
+        final var controller = Projects.getDatabaseController();
+
+        // If it doesn't already exist, insert the new value.
+        if (!controller.valueExists(this.table, this.primaryField.getName(), this.primaryField.get(object))) {
+            controller.insertUnsafe(this.table, this.toInsertableValuePair(object, this.getFields()));
+            return;
+        }
+
+        // Otherwise, update the value.
+        controller.updateUnsafe(this.table, this.primaryField.getName(), this.primaryField.get(object),
+                this.toInsertableValuePair(object, this.getMutableFields().stream().map(field -> ((Field<T, ?>) field)).collect(Collectors.toUnmodifiableSet())));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Pair<String, Object>[] toInsertableValuePair(final T object, final Set<Field<T, ?>> fields) {
+        return (Pair<String, Object>[]) fields.stream().map(field -> Pair.immutable(field.getName(), field.get(object))).toArray(Pair<?, ?>[]::new);
     }
 
     @Override
@@ -92,11 +113,10 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     public T deserialise(ResultSet resultSet, boolean careful) {
         this.currentlyDeserialising = true;
 
-        final Collection<ImmutableField<T, ?>> requiredFields = this.getImmutableFields();
         final Constructor<T> constructor;
 
         try {
-            constructor = this.type.getConstructor(requiredFields.stream().map(field -> PrimitiveClass.convert(field.getFieldType())).toArray(Class<?>[]::new));
+            constructor = this.type.getConstructor(this.immutableFields.stream().map(field -> PrimitiveClass.convert(field.getFieldType())).toArray(Class<?>[]::new));
         } catch (final NoSuchMethodException e) {
             throw new RuntimeException(NoSuchConstructorException.from(e));
         }
@@ -104,7 +124,7 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
         try {
             final Collection<Object> args = new ArrayList<>();
 
-            requiredFields.forEach(field ->
+            immutableFields.forEach(field ->
                     args.add(ResultSetConversions.getValueUnsafe(resultSet, field.getName(), field.getFieldType())));
 
             final T constructedObject = constructor.newInstance(args.toArray());
@@ -147,6 +167,9 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
         protected final Class<T> type;
         protected final String tableName;
 
+        /** The {@link ImmutableField}s, stored in a {@link LinkedHashMap} to retain the order in which they are added. */
+        protected final LinkedHashSet<ImmutableField<T, ?>> immutableFields = new LinkedHashSet<>();
+
         protected final Set<Field<T, ?>> fields = new HashSet<>();
 
         protected PrimaryField<T, PK> primaryField;
@@ -158,11 +181,12 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
 
         public B primaryField(final String name, final Class<PK> fieldType, final Function<T, PK> getter) {
             this.primaryField = new PrimaryField<>(name, this.type, fieldType, getter);
+            this.immutableFields.add(this.primaryField);
             return (B) this;
         }
 
         public <FT> B field(final String name, final Class<FT> fieldType, final Function<T, FT> getter) {
-            this.fields.add(new ImmutableField<>(name, this.type, fieldType, false, getter));
+            this.immutableFields.add(new ImmutableField<>(name, this.type, fieldType, false, getter));
             return (B) this;
         }
 

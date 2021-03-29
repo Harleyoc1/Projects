@@ -1,6 +1,5 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.google.common.collect.ImmutableSet;
 import com.harleyoconnor.projects.serialisation.fields.Field;
 import com.harleyoconnor.projects.serialisation.fields.ImmutableField;
 import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
@@ -10,7 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link SerDes} specifically built for {@link Record} objects, and hence
- * only storing {@link ImmutableField} objects in {@link #fields}.
+ * only storing {@link ImmutableField} objects.
  *
  * <p>This {@link SerDes} must be instantiated using {@link ClassSerDes.Builder}.</p>
  *
@@ -22,22 +21,13 @@ import java.util.stream.Collectors;
  */
 public final class RecordSerDes<T extends Record & SerDesable<T, PK>, PK> extends AbstractSerDes<T, PK> {
 
-    private final ImmutableSet<ImmutableField<T, ?>> fields;
-
     private RecordSerDes(Class<T> type, String name, final PrimaryField<T, PK> primaryField, final Set<ImmutableField<T, ?>> fields) {
-        super(type, name, primaryField);
-        fields.add(primaryField);
-        this.fields = ImmutableSet.copyOf(fields);
+        super(type, name, primaryField, fields);
     }
 
     @Override
     public Set<Field<T, ?>> getFields() {
-        return ImmutableSet.copyOf(this.fields);
-    }
-
-    @Override
-    public Set<ImmutableField<T, ?>> getImmutableFields() {
-        return this.fields;
+        return this.getImmutableFields().stream().collect(Collectors.toUnmodifiableSet());
     }
 
     @SuppressWarnings("unchecked")
@@ -50,7 +40,7 @@ public final class RecordSerDes<T extends Record & SerDesable<T, PK>, PK> extend
         @Override
         public RSD build() {
             this.assertPrimaryFieldSet();
-            return this.register((RSD) new RecordSerDes<>(this.type, this.tableName, this.primaryField, this.fields.stream().map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toSet())));
+            return this.register((RSD) new RecordSerDes<>(this.type, this.tableName, this.primaryField, this.immutableFields));
         }
 
         public static <T extends Record & SerDesable<T, PK>, PK, CSD extends RecordSerDes<T, PK>, B extends Builder<T, PK, CSD, B>> Builder<T, PK, CSD, B> of(final Class<PK> primaryKeyClass, final Class<T> type) {

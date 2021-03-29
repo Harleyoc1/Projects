@@ -7,6 +7,9 @@ import com.harleyoconnor.projects.serialisation.SerDes;
 import com.harleyoconnor.projects.serialisation.fields.Field;
 import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
 
+import java.time.Instant;
+import java.util.Date;
+
 /**
  * @author Harley O'Connor
  */
@@ -16,6 +19,7 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
             .primaryField("id", Integer.class, Employee::getId)
+            .field("hire_date", Date.class, Employee::getHireDate)
             .field("first_name", String.class, Employee::getFirstName, Employee::setFirstName)
             .field("last_name", String.class, Employee::getLastName, Employee::setLastName)
             .uniqueField("email", String.class, Employee::getEmail, Employee::setEmail)
@@ -28,26 +32,35 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
     }
 
     private final int id;
+    private final Date hireDate;
+
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private Department department;
 
-    public Employee(int id) {
+    public Employee(int id, Date hireDate) {
         this.id = id;
+        this.hireDate = hireDate;
     }
 
-    public Employee(int id, String firstName, String lastName, String email, String password) {
-        this.id = id;
+    public Employee(String firstName, String lastName, String email, String password, Department department) {
+        this.id = Projects.getDatabaseController().getMaxOrDefault(SER_DES.getTable(), PRIMARY_FIELD.getName(), 1) + 1;
+        this.hireDate = Date.from(Instant.now());
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.department = department;
     }
 
     public int getId() {
         return id;
+    }
+
+    public Date getHireDate() {
+        return hireDate;
     }
 
     public String getFirstName() {

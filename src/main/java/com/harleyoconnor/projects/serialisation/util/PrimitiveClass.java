@@ -1,6 +1,7 @@
 package com.harleyoconnor.projects.serialisation.util;
 
-import java.util.HashMap;
+import com.harleyoconnor.projects.containers.MapContainer;
+
 import java.util.Map;
 
 /**
@@ -8,18 +9,15 @@ import java.util.Map;
  */
 public final class PrimitiveClass {
 
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_CLASSES = new HashMap<>();
-
-    static {
-        PRIMITIVE_CLASSES.put(Boolean.class, Boolean.TYPE);
-        PRIMITIVE_CLASSES.put(Byte.class, Byte.TYPE);
-        PRIMITIVE_CLASSES.put(Short.class, Short.TYPE);
-        PRIMITIVE_CLASSES.put(Integer.class, Integer.TYPE);
-        PRIMITIVE_CLASSES.put(Long.class, Long.TYPE);
-        PRIMITIVE_CLASSES.put(Float.class, Float.TYPE);
-        PRIMITIVE_CLASSES.put(Double.class, Double.TYPE);
-        PRIMITIVE_CLASSES.put(Character.class, Character.TYPE);
-    }
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_CLASSES = new MapContainer.HashMapContainer<Class<?>, Class<?>>()
+            .put(Boolean.class, Boolean.TYPE)
+            .put(Byte.class, Byte.TYPE)
+            .put(Short.class, Short.TYPE)
+            .put(Integer.class, Integer.TYPE)
+            .put(Long.class, Long.TYPE)
+            .put(Float.class, Float.TYPE)
+            .put(Double.class, Double.TYPE)
+            .put(Character.class, Character.TYPE).get();
 
     /**
      * Checks if the given {@link Class} is convertible to a primitive class by

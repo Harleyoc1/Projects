@@ -2,6 +2,8 @@ package com.harleyoconnor.projects.serialisation.fields;
 
 import com.harleyoconnor.projects.serialisation.SerDesable;
 
+import javax.annotation.Nullable;
+
 /**
  * Implementation of {@link Field} which provides compatbility with the {@code foreign key} SQL
  * constraint.
@@ -28,6 +30,7 @@ public interface ForeignField<P extends SerDesable<P, ?>, T, FKT extends SerDesa
      * @param object The {@code object} of type {@link P} to get the {@code field} for.
      * @return The actual value of the {@link Field}, of type {@link FKT}.
      */
+    @Nullable
     FKT getActual(P object);
 
     /**

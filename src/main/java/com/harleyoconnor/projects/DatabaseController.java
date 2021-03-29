@@ -6,6 +6,9 @@ import com.harleyoconnor.projects.serialisation.exceptions.NoSuchRowException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Harley O'Connor
@@ -58,15 +61,82 @@ public final class DatabaseController {
 
         statementBuilder.append("where ").append(primaryFieldName).append( " = ?;");
 
-        final var statement = this.connection.prepareStatement(statementBuilder.toString());
+        final List<Object> args = Stream.of(valuesToUpdate).map(Pair::getValue).collect(Collectors.toList());
+        args.add(primaryFieldValue);
 
-        int i;
-        for (i = 1; i <= valuesToUpdate.length; i++) {
-            statement.setObject(i, valuesToUpdate[i - 1].getValue());
+        this.executePreparedStatement(statementBuilder.toString(), args);
+    }
+
+    public void insertUnsafe(final String table, final Pair<String, Object>... valuesToInsert) {
+        try {
+            this.insert(table, valuesToInsert);
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
         }
-        statement.setObject(i, primaryFieldValue);
+    }
+
+    public void insert(final String table, final Pair<String, Object>... valuesToInsert) throws SQLException {
+        final var statementBuilder = new StringBuilder("insert into " + table + " (");
+
+        for (int i = 0; i < valuesToInsert.length; i++) {
+            statementBuilder.append(valuesToInsert[i].getKey()).append(i != valuesToInsert.length - 1 ? ", " : " ");
+        }
+
+        statementBuilder.append(") values (");
+
+        for (int i = 0; i < valuesToInsert.length; i++) {
+            statementBuilder.append("?").append(i != valuesToInsert.length - 1 ? ", " : " ");
+        }
+
+        this.executePreparedStatement(statementBuilder.append(")").toString(), Stream.of(valuesToInsert).map(Pair::getValue).collect(Collectors.toUnmodifiableList()));
+    }
+
+    private void executePreparedStatement(final String sqlQuery, final List<Object> args) throws SQLException {
+        final var statement = this.connection.prepareStatement(sqlQuery);
+
+        for (int i = 1; i <= args.size(); i++) {
+            statement.setObject(i, args.get(i - 1));
+        }
 
         statement.executeQuery();
+    }
+
+    public int getMaxOrDefault(final String table, final String fieldName, final int defaultValue) {
+        try {
+            final int max = this.getMax(table, fieldName);
+            return max == -1 ? defaultValue : max;
+        } catch (final SQLException e) {
+            return defaultValue;
+        }
+    }
+
+    public int getMaxUnsafe(final String table, final String fieldName) {
+        try {
+            return this.getMax(table, fieldName);
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getMax(final String table, final String fieldName) throws SQLException {
+        final var resultSet = this.connection.prepareStatement("select max(" + fieldName + ") from " + table).executeQuery();
+
+        if (!resultSet.next())
+            return -1;
+
+        return resultSet.getInt(1);
+    }
+
+    public boolean valueExists(final String table, final String fieldName, final Object fieldValue) {
+        try {
+            // TODO: Make a method that doesn't involve pointlessly transferring this data to the client.
+            this.select(table, fieldName, fieldValue);
+        } catch (final NoSuchRowException e) {
+            return false;
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 
     public Connection getConnection() {

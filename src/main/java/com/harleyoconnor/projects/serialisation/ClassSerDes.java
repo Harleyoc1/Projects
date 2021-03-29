@@ -5,7 +5,6 @@ import com.harleyoconnor.projects.serialisation.fields.*;
 import com.harleyoconnor.projects.serialisation.util.ResultSetConversions;
 
 import java.sql.ResultSet;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -26,9 +25,9 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
 
     private final ImmutableSet<Field<T, ?>> fields;
 
-    private ClassSerDes(final Class<T> type, final String table, final PrimaryField<T, PK> primaryField, final Set<Field<T, ?>> fields) {
-        super(type, table, primaryField);
-        fields.add(primaryField);
+    private ClassSerDes(final Class<T> type, final String table, final PrimaryField<T, PK> primaryField, final Set<Field<T, ?>> fields, final Set<ImmutableField<T, ?>> immutableFields) {
+        super(type, table, primaryField, immutableFields);
+        fields.addAll(immutableFields);
         this.fields = ImmutableSet.copyOf(fields);
     }
 
@@ -63,8 +62,6 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
     @SuppressWarnings("unchecked")
     public static class Builder<T extends SerDesable<T, PK>, PK, CSD extends ClassSerDes<T, PK>, B extends ClassSerDes.Builder<T, PK, CSD, B>> extends AbstractSerDes.Builder<T, PK, CSD, B> {
 
-        private final Set<Field<T, ?>> fields = new HashSet<>();
-
         public Builder(final Class<T> type, final String tableName) {
             super(type, tableName);
         }
@@ -92,7 +89,7 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
         @Override
         public CSD build () {
             this.assertPrimaryFieldSet();
-            return this.register((CSD) new ClassSerDes<>(this.type, this.tableName, this.primaryField, this.fields));
+            return this.register((CSD) new ClassSerDes<>(this.type, this.tableName, this.primaryField, this.fields, this.immutableFields));
         }
 
         public static <T extends SerDesable<T, PK>, PK, CSD extends ClassSerDes<T, PK>, B extends ClassSerDes.Builder<T, PK, CSD, B>> Builder<T, PK, CSD, B> of(final Class<T> type, final Class<PK> primaryKeyClass) {
