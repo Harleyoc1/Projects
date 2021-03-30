@@ -57,7 +57,7 @@ public abstract class AbstractForeignField<P extends SerDesable<P, ?>, T, FKT ex
     public FKT getFromValue(T value) {
         /* We call unsafe here as this should not be called unless there is already a SerDes registered
            for the foreign field, and if not that is a misuse of the API. */
-        final SerDes<FKT, ?> serDes = SerDesRegistry.getUnsafe(this.foreignField.getParentType());
+        final var serDes = SerDesRegistry.getUnsafe(this.foreignField.getParentType());
 
         // Either obtain the object from the currently loaded objects for that SerDes or deserialise it.
         return serDes.getLoadedObjects().stream().filter(object -> this.foreignField.get(object).equals(value)).findFirst().orElseGet(() -> {

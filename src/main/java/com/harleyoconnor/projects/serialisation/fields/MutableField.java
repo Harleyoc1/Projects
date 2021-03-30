@@ -29,6 +29,11 @@ public class MutableField<P extends SerDesable<P, ?>, T> extends AbstractField<P
     }
 
     @Override
+    public boolean isMutable() {
+        return true;
+    }
+
+    @Override
     public Field<P, T> set(P object, @Nullable T newValue) {
         this.setter.accept(object, newValue);
         return this;

@@ -29,7 +29,7 @@ public abstract class AbstractSerDesable<T extends SerDesable<T, PK>, PK> implem
         if (obj == null || this.getClass() != obj.getClass())
             return false;
 
-        final AbstractSerDesable<T, PK> otherSerDesable = ((AbstractSerDesable<T, PK>) obj);
+        final var otherSerDesable = ((AbstractSerDesable<T, PK>) obj);
 
         // SerDes instances should be created as a static field.
         if (this.getSerDes() != otherSerDesable.getSerDes())

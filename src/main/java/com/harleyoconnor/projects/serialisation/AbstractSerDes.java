@@ -1,7 +1,6 @@
 package com.harleyoconnor.projects.serialisation;
 
 import com.harleyoconnor.javautilities.pair.Pair;
-import com.harleyoconnor.projects.DatabaseController;
 import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.exceptions.NoSuchConstructorException;
 import com.harleyoconnor.projects.serialisation.fields.*;
@@ -69,12 +68,11 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
     }
 
     @Override
-    public Set<ImmutableField<T, ?>> getImmutableFields() {
+    public Set<Field<T, ?>> getImmutableFields() {
         return this.immutableFields.stream().collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void serialise(T object) {
         final var controller = Projects.getDatabaseController();
 
@@ -122,13 +120,12 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
         }
 
         try {
-            final Collection<Object> args = new ArrayList<>();
+            final var args = new ArrayList<>();
 
             immutableFields.forEach(field ->
                     args.add(ResultSetConversions.getValueUnsafe(resultSet, field.getName(), field.getFieldType())));
 
             final T constructedObject = constructor.newInstance(args.toArray());
-
             this.loadedObjects.add(constructedObject);
 
             return this.finaliseDeserialisation(resultSet, constructedObject, careful);

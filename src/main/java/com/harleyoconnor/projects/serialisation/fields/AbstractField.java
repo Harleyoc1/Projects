@@ -69,7 +69,7 @@ public abstract class AbstractField<P extends SerDesable<P, ?>, T> implements Fi
         if (o == null || this.getClass() != o.getClass())
             return false;
 
-        final AbstractField<?, ?> that = (AbstractField<?, ?>) o;
+        final var that = (AbstractField<?, ?>) o;
         return Objects.equals(this.name, that.name)
                 && Objects.equals(this.parentType, that.parentType)
                 && Objects.equals(this.fieldType, that.fieldType)

@@ -63,6 +63,19 @@ public interface Field<P extends SerDesable<P, ?>, T> {
     boolean isUnique();
 
     /**
+     * Assets if this {@link Field} object is mutable.
+     *
+     * <p>This allows {@link Field} implementations to declare themselves as mutable
+     * without having to extend {@link MutableField}.</p>
+     *
+     * @return {@code true} if this field is {@code non-final} (can be mutated);
+     *         {@code false} otherwise.
+     */
+    default boolean isMutable() {
+        return false;
+    }
+
+    /**
      * Gets the value of the {@code field} of type {@link T} in the given {@code object}
      * of type {@link P}.
      *

@@ -31,6 +31,11 @@ public class MutableForeignField<P extends SerDesable<P, ?>, T, FKT extends SerD
     }
 
     @Override
+    public boolean isMutable() {
+        return true;
+    }
+
+    @Override
     public Field<P, T> set(P object, @Nullable T newValue) {
         this.setter.accept(object, newValue == null ? null : this.getFromValue(newValue));
         return this;

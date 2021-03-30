@@ -73,9 +73,8 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
      *
      * @return A {@link Set} of {@link MutableField} objects for this {@link SerDes}.
      */
-    @SuppressWarnings("unchecked")
-    default Set<MutableField<T, ?>> getMutableFields() {
-        return this.getFields().stream().filter(field -> field instanceof MutableField).map(field -> ((MutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    default Set<Field<T, ?>> getMutableFields() {
+        return this.getFields().stream().filter(Field::isMutable).collect(Collectors.toUnmodifiableSet());
     }
 
     /**
@@ -83,9 +82,8 @@ public interface SerDes<T extends SerDesable<T, PK>, PK> {
      *
      * @return A {@link Set} of {@link ImmutableField} objects for this {@link SerDes}.
      */
-    @SuppressWarnings("unchecked")
-    default Set<ImmutableField<T, ?>> getImmutableFields() {
-        return this.getFields().stream().filter(field -> field instanceof ImmutableField).map(field -> ((ImmutableField<T, ?>) field)).collect(Collectors.toUnmodifiableSet());
+    default Set<Field<T, ?>> getImmutableFields() {
+        return this.getFields().stream().filter(field -> !field.isMutable()).collect(Collectors.toUnmodifiableSet());
     }
 
     /**

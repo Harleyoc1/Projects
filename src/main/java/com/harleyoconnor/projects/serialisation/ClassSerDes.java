@@ -42,16 +42,19 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
 
         if (!careful)
             this.getForeignFields().forEach(foreignField -> this.setField(resultSet, constructedObject, foreignField));
-        else this.getForeignFields().forEach(foreignField -> foreignField.getParentSerDes().get()
-                .whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(constructedObject, deserialisedObject, foreignField)));
+        else this.getForeignFields().forEach(foreignField -> this.setWhenNextDeserialised(constructedObject, foreignField, foreignField.getForeignField()));
 
         return super.finaliseDeserialisation(resultSet, constructedObject, careful);
+    }
+
+    private <A extends SerDesable<A, ?>, B, C> void setWhenNextDeserialised(final T constructedObject, final ForeignField<T, C, ?> foreignField, final Field<A, B> foreignForeignField) {
+        foreignForeignField.getParentSerDes().get().whenNextDeserialised(deserialisedObject -> this.whenNextDeserialised(constructedObject, deserialisedObject, foreignField));
     }
 
     @SuppressWarnings("unchecked")
     private <SD extends SerDesable<SD, ?>, V> void whenNextDeserialised(final T object, final SD deserialisedObject, final ForeignField<T, V, ?> foreignField) {
         deserialisedObject.getSerDes().getFields().stream().filter(field -> field.equals(foreignField.getForeignField())).map(field -> ((Field<SD, V>) field)).forEach(field ->
-                foreignField.set((T) field.get(deserialisedObject), foreignField.get(object))
+                foreignField.set(object, field.get(deserialisedObject))
         );
     }
 

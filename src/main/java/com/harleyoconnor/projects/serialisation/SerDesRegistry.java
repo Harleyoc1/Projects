@@ -23,7 +23,7 @@ public final class SerDesRegistry {
     private static final Set<SerDes<?, ?>> serDesables = new HashSet<>();
 
     public static <T extends SerDesable<T, ?>> SerDes<T, ?> getUnsafe (final Class<T> serDesableClass) throws NoSuchSerDesException {
-        final Optional<SerDes<T, ?>> optionalSerDes = get(serDesableClass);
+        final var optionalSerDes = get(serDesableClass);
 
         if (optionalSerDes.isEmpty())
             throw new NoSuchSerDesException("No SerDes found for Class '" + serDesableClass.getSimpleName() + "'.");

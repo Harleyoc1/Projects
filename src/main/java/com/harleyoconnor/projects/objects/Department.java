@@ -1,5 +1,6 @@
 package com.harleyoconnor.projects.objects;
 
+import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.AbstractSerDesable;
 import com.harleyoconnor.projects.serialisation.ClassSerDes;
 import com.harleyoconnor.projects.serialisation.SerDes;
@@ -26,8 +27,8 @@ public final class Department extends AbstractSerDesable<Department, Integer> {
         this.id = id;
     }
 
-    public Department(int id, String name, Employee head) {
-        this.id = id;
+    public Department(String name, Employee head) {
+        this.id = Projects.getDatabaseController().getMaxOrDefault(SER_DES.getTable(), PRIMARY_FIELD.getName(), 1) + 1;
         this.name = name;
         this.head = head;
     }

@@ -24,6 +24,7 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
             .field("last_name", String.class, Employee::getLastName, Employee::setLastName)
             .uniqueField("email", String.class, Employee::getEmail, Employee::setEmail)
             .field("password", String.class, Employee::getPassword, Employee::setPassword)
+            .field("wage", Double.class, Employee::getWage, Employee::setWage)
             .foreignField("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
 
     public static Employee fromEmail(final String email) {
@@ -38,6 +39,8 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
     private String lastName;
     private String email;
     private String password;
+    private double wage;
+
     private Department department;
 
     public Employee(int id, Date hireDate) {
@@ -93,6 +96,14 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public double getWage() {
+        return wage;
+    }
+
+    public void setWage(double wage) {
+        this.wage = wage;
     }
 
     public Department getDepartment() {
