@@ -70,23 +70,19 @@ public final class ClassSerDes<T extends SerDesable<T, PK>, PK> extends Abstract
         }
 
         public <FT> B field(final String name, final Class<FT> fieldType, final Function<T, FT> getter, final BiConsumer<T, FT> setter) {
-            this.fields.add(new MutableField<>(name, this.type, fieldType, false, getter, setter));
-            return (B) this;
+            return this.field(new MutableField<>(name, this.type, fieldType, false, getter, setter));
         }
 
         public <FT> B uniqueField(final String name, final Class<FT> fieldType, final Function<T, FT> getter, final BiConsumer<T, FT> setter) {
-            this.fields.add(new MutableField<>(name, this.type, fieldType, true, getter, setter));
-            return (B) this;
+            return this.field(new MutableField<>(name, this.type, fieldType, true, getter, setter));
         }
 
-        public <FKT extends SerDesable<FKT, ?>, FT> B foreignField(final String name, final Field<FKT, FT> foreignField, final Function<T, FKT> getter, final BiConsumer<T, FKT> setter) {
-            this.fields.add(new MutableForeignField<>(name, this.type, foreignField, false, getter, setter));
-            return (B) this;
+        public <FKT extends SerDesable<FKT, ?>, FT> B field(final String name, final Field<FKT, FT> foreignField, final Function<T, FKT> getter, final BiConsumer<T, FKT> setter) {
+            return this.field(new MutableForeignField<>(name, this.type, foreignField, false, getter, setter));
         }
 
-        public <FKT extends SerDesable<FKT, ?>, FT> B uniqueForeignField(final String name, final Field<FKT, FT> foreignField, final Function<T, FKT> getter, final BiConsumer<T, FKT> setter) {
-            this.fields.add(new MutableForeignField<>(name, this.type, foreignField, true, getter, setter));
-            return (B) this;
+        public <FKT extends SerDesable<FKT, ?>, FT> B uniqueField(final String name, final Field<FKT, FT> foreignField, final Function<T, FKT> getter, final BiConsumer<T, FKT> setter) {
+            return this.field(new MutableForeignField<>(name, this.type, foreignField, true, getter, setter));
         }
 
         @Override

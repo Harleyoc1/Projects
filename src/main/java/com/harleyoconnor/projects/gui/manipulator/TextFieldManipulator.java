@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javafx.animation.Timeline;
 import javafx.event.Event;
@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 
 /**
  * A helper class that helps easily manipulate {@link Timeline} {@link Object}s by

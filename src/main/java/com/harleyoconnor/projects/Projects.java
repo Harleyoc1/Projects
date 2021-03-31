@@ -1,46 +1,64 @@
 package com.harleyoconnor.projects;
 
-import com.harleyoconnor.projects.gui.builder.StackPaneManipulator;
-import com.harleyoconnor.projects.gui.builder.StageManipulator;
+import com.harleyoconnor.projects.gui.SignInScreen;
+import com.harleyoconnor.projects.gui.manipulator.SceneManipulator;
+import com.harleyoconnor.projects.gui.manipulator.StackPaneManipulator;
+import com.harleyoconnor.projects.gui.manipulator.StageManipulator;
 import com.harleyoconnor.projects.object.Employee;
 import com.harleyoconnor.projects.serialisation.util.SQLHelper;
+import com.harleyoconnor.projects.util.Injected;
+import com.harleyoconnor.projects.util.ReflectionHelper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import java.util.logging.Logger;
+import javax.annotation.Nullable;
 
 /**
  * @author Harley O'Connor
  */
 public final class Projects extends Application {
 
-    private static final Logger LOADING_LOGGER = Logger.getLogger("Loading");
-    private static final DatabaseController DATABASE_CONTROLLER;
+    private static final DatabaseController DATABASE_CONTROLLER = new DatabaseController(
+            SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT,
+                    DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
 
-    static {
-        DATABASE_CONTROLLER = new DatabaseController(SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT, DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
-
-        Employee.SER_DES.getFields();
-
-        final var sameEmployee = Employee.fromEmail("thisismyemail@harleyoconnor.com");
-        final var archieAdams = Employee.fromEmail("thisisarchieadamsemail@harleyoconnor.com");
-
-        LOADING_LOGGER.info(sameEmployee.toString() + " " + sameEmployee.equals(archieAdams) + " Hash Codes: " + archieAdams.hashCode() + " " + sameEmployee.hashCode());
-    }
+    @Injected
+    public static final Projects INSTANCE = null;
 
     private final StackPaneManipulator<StackPane> primaryView = StackPaneManipulator.create();
-    private final Scene primaryScene = new Scene(this.primaryView.get());
+    private final SceneManipulator<Scene> primaryScene = SceneManipulator.create(this.primaryView.get());
 
-    /** Effectively {@code final} variable, holding the primary {@link Stage}. Set in {@link #start(Stage)}. */
-    private StageManipulator<Stage> primaryStage;
+    @Injected
+    private final StageManipulator<Stage> primaryStage = null;
+
+    private Employee currentEmployee;
+
+    public Projects() {
+        ReflectionHelper.setFieldUnchecked(this.getClass(), "INSTANCE", this);
+    }
 
     @Override
     public void start(final Stage primaryStage) {
-        this.primaryStage = StageManipulator.of(primaryStage).minWidth(Constants.MIN_WIDTH).minHeight(Constants.MIN_HEIGHT)
-                .width(Constants.DEFAULT_WIDTH).height(Constants.DEFAULT_HEIGHT).title("Projects").scene(this.primaryScene)
-                .show();
+        ReflectionHelper.setFieldUnchecked(this, "primaryStage", StageManipulator.of(primaryStage));
+
+        assert this.primaryStage != null;
+
+        this.primaryStage.minWidth(Constants.MIN_WIDTH).minHeight(Constants.MIN_HEIGHT)
+                .width(Constants.DEFAULT_WIDTH).height(Constants.DEFAULT_HEIGHT).title("Projects")
+                .scene(this.primaryScene.get()).show();
+
+        new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
+    }
+
+    @Nullable
+    public Employee getCurrentEmployee() {
+        return currentEmployee;
+    }
+
+    public void signIn(final Employee newEmployee) {
+        this.currentEmployee = newEmployee;
     }
 
     public static void main (final String[] args) {

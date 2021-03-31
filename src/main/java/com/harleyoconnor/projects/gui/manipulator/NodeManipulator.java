@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import com.harleyoconnor.projects.Constants;
 import javafx.beans.property.DoubleProperty;
@@ -16,7 +16,7 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
 
     protected final N node;
 
-    public NodeManipulator(N node) {
+    protected NodeManipulator(N node) {
         this.node = node;
     }
 

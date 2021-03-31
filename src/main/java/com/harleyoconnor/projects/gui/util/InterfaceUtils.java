@@ -1,8 +1,8 @@
 package com.harleyoconnor.projects.gui.util;
 
 import com.harleyoconnor.projects.Constants;
-import com.harleyoconnor.projects.gui.builder.HBoxManipulator;
-import com.harleyoconnor.projects.gui.builder.VBoxManipulator;
+import com.harleyoconnor.projects.gui.manipulator.HBoxManipulator;
+import com.harleyoconnor.projects.gui.manipulator.VBoxManipulator;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;

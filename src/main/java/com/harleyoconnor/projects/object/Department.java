@@ -17,7 +17,7 @@ public final class Department extends AbstractSerDesable<Department, Integer> {
     public static final SerDes<Department, Integer> SER_DES = ClassSerDes.Builder.of(Department.class, Integer.class)
             .primaryField("id", Integer.class, Department::getId)
             .uniqueField("name", String.class, Department::getName, Department::setName)
-            .foreignField("head", Employee.PRIMARY_FIELD, Department::getHead, Department::setHead).build();
+            .field("head", Employee.PRIMARY_FIELD, Department::getHead, Department::setHead).build();
 
     private final int id;
     private String name;

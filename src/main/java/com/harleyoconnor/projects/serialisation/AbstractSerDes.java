@@ -3,7 +3,10 @@ package com.harleyoconnor.projects.serialisation;
 import com.harleyoconnor.javautilities.pair.Pair;
 import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.serialisation.exception.NoSuchConstructorException;
-import com.harleyoconnor.projects.serialisation.field.*;
+import com.harleyoconnor.projects.serialisation.field.Field;
+import com.harleyoconnor.projects.serialisation.field.ForeignField;
+import com.harleyoconnor.projects.serialisation.field.ImmutableField;
+import com.harleyoconnor.projects.serialisation.field.PrimaryField;
 import com.harleyoconnor.projects.serialisation.util.PrimitiveClass;
 import com.harleyoconnor.projects.serialisation.util.ResultSetConversions;
 
@@ -177,19 +180,29 @@ public abstract class AbstractSerDes<T extends SerDesable<T, PK>, PK> implements
         }
 
         public B primaryField(final String name, final Class<PK> fieldType, final Function<T, PK> getter) {
-            this.primaryField = new PrimaryField<>(name, this.type, fieldType, getter);
+            return this.primaryField(new PrimaryField<>(name, this.type, fieldType, getter));
+        }
+
+        public B primaryField(final PrimaryField<T, PK> primaryField) {
+            this.primaryField = primaryField;
             this.immutableFields.add(this.primaryField);
             return (B) this;
         }
 
-        public <FT> B field(final String name, final Class<FT> fieldType, final Function<T, FT> getter) {
-            this.immutableFields.add(new ImmutableField<>(name, this.type, fieldType, false, getter));
+        public <FT> B field(final Field<T, FT> field) {
+            if (!field.isMutable())
+                this.immutableFields.add(((ImmutableField<T, ?>) field));
+            else this.fields.add(field);
+
             return (B) this;
         }
 
+        public <FT> B field(final String name, final Class<FT> fieldType, final Function<T, FT> getter) {
+            return this.field(new ImmutableField<>(name, this.type, fieldType, false, getter));
+        }
+
         public <FT> B uniqueField(final String name, final Class<FT> fieldType, final Function<T, FT> getter) {
-            this.fields.add(new ImmutableField<>(name, this.type, fieldType, true, getter));
-            return (B) this;
+            return this.field(new ImmutableField<>(name, this.type, fieldType, true, getter));
         }
 
         public abstract SD build();

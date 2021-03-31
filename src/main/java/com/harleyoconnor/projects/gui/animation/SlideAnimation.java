@@ -1,6 +1,6 @@
 package com.harleyoconnor.projects.gui.animation;
 
-import com.harleyoconnor.projects.gui.builder.TimelineManipulator;
+import com.harleyoconnor.projects.gui.manipulator.TimelineManipulator;
 import javafx.animation.Interpolator;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;

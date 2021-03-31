@@ -1,7 +1,6 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import com.harleyoconnor.projects.gui.util.InterfaceUtils;
-import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
@@ -40,7 +39,7 @@ public class VBoxManipulator<V extends VBox> extends PaneManipulator<V, VBoxMani
         return this;
     }
 
-    public static <V extends VBox> VBoxManipulator<V> create() {
+    public static VBoxManipulator<VBox> create() {
         return new VBoxManipulator<>();
     }
 

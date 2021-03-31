@@ -5,7 +5,9 @@ import com.harleyoconnor.projects.serialisation.AbstractSerDesable;
 import com.harleyoconnor.projects.serialisation.ClassSerDes;
 import com.harleyoconnor.projects.serialisation.SerDes;
 import com.harleyoconnor.projects.serialisation.field.Field;
+import com.harleyoconnor.projects.serialisation.field.MutableField;
 import com.harleyoconnor.projects.serialisation.field.PrimaryField;
+import com.harleyoconnor.projects.util.HashManager;
 
 import java.time.Instant;
 import java.util.Date;
@@ -15,21 +17,27 @@ import java.util.Date;
  */
 public final class Employee extends AbstractSerDesable<Employee, Integer> {
 
-    public static final Field<Employee, Integer> PRIMARY_FIELD = new PrimaryField<>("id", Employee.class, Integer.class, Employee::getId);
+    private static final HashManager HASH_MANAGER = new HashManager();
+
+    public static final PrimaryField<Employee, Integer> PRIMARY_FIELD = new PrimaryField<>("id", Employee.class, Integer.class, Employee::getId);
+    public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, Employee::getEmail, Employee::setEmail);
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
-            .primaryField("id", Integer.class, Employee::getId)
-            .field("hire_date", Date.class, Employee::getHireDate)
+            .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate)
+            .field(EMAIL_FIELD)
             .field("first_name", String.class, Employee::getFirstName, Employee::setFirstName)
             .field("last_name", String.class, Employee::getLastName, Employee::setLastName)
-            .uniqueField("email", String.class, Employee::getEmail, Employee::setEmail)
             .field("password", String.class, Employee::getPassword, Employee::setPassword)
             .field("wage", Double.class, Employee::getWage, Employee::setWage)
-            .foreignField("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
+            .field("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
 
     public static Employee fromEmail(final String email) {
         return SER_DES.getLoadedObjects().stream().filter(employee -> employee.getEmail().equals(email)).findFirst()
-                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().selectUnsafe(SER_DES.getTable(), "email", email)));
+                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().selectUnsafe(SER_DES.getTable(), EMAIL_FIELD.getName(), email)));
+    }
+
+    public static boolean emailExists(final String email) {
+        return Projects.getDatabaseController().valueExists(SER_DES.getTable(), EMAIL_FIELD.getName(), email);
     }
 
     private final int id;
@@ -54,7 +62,7 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
+        this.password = HASH_MANAGER.hash(password);
         this.department = department;
     }
 
@@ -95,7 +103,7 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = HASH_MANAGER.hash(password);
     }
 
     public double getWage() {
@@ -117,6 +125,18 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
     @Override
     public SerDes<Employee, Integer> getSerDes() {
         return SER_DES;
+    }
+
+    /**
+     * Authenticates the given {@code password}, checking it matches the stored hashed
+     * {@link #password}.
+     *
+     * @param password The {@code password} to authenticate.
+     * @return {@code true} if the {@code password} is authentic;
+     *         {@code false} otherwise.
+     */
+    public boolean authenticate(final String password) {
+        return HASH_MANAGER.authenticate(this.password, password);
     }
 
 }

@@ -1,8 +1,9 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 
 /**
  * A helper class that helps easily manipulate {@link Button} {@link Object}s by
@@ -13,7 +14,12 @@ import javafx.scene.control.Button;
  */
 public class ButtonManipulator<B extends Button> extends RegionManipulator<B, ButtonManipulator<B>> {
 
-    public ButtonManipulator(B node) {
+    @SuppressWarnings("unchecked")
+    private ButtonManipulator() {
+        this((B) new Button());
+    }
+
+    private ButtonManipulator(B node) {
         super(node);
     }
 
@@ -28,7 +34,11 @@ public class ButtonManipulator<B extends Button> extends RegionManipulator<B, Bu
     }
 
     public static ButtonManipulator<Button> create() {
-        return new ButtonManipulator<>(new Button());
+        return new ButtonManipulator<>();
+    }
+
+    public static <B extends Button> ButtonManipulator<B> of(final B button) {
+        return new ButtonManipulator<>(button);
     }
 
 }

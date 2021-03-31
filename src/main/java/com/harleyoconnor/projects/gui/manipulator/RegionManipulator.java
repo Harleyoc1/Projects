@@ -1,13 +1,23 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
+import com.harleyoconnor.projects.gui.util.InterfaceUtils;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
 
 /**
+ * A helper class that helps easily manipulate {@link Region} {@link Object}s by
+ * chaining configuration of its properties.
+ *
+ * @param <R> The type of the {@link Region} being manipulated.
+ * @param <RM> The type of the {@link RegionManipulator}.
  * @author Harley O'Connor
  */
 @SuppressWarnings("unchecked") // Shh IDE. I know what I'm doing.
-public abstract class RegionManipulator<R extends Region, RM extends RegionManipulator<R, RM>> extends NodeManipulator<R, RM> {
+public class RegionManipulator<R extends Region, RM extends RegionManipulator<R, RM>> extends NodeManipulator<R, RM> {
+
+    public RegionManipulator() {
+        this((R) new Region());
+    }
 
     public RegionManipulator(R region) {
         super(region);
@@ -180,6 +190,14 @@ public abstract class RegionManipulator<R extends Region, RM extends RegionManip
     public RM fixWidthHeight (int width, int height) {
         this.fixWidth(width);
         return this.fixHeight(height);
+    }
+
+    public static <R extends Region, RM extends RegionManipulator<R, RM>> RegionManipulator<R, RM> horizontalSpacer() {
+        return new RegionManipulator<>((R) InterfaceUtils.createHorizontalSpacer());
+    }
+
+    public static <R extends Region, RM extends RegionManipulator<R, RM>> RegionManipulator<R, RM> verticalSpacer() {
+        return new RegionManipulator<>((R) InterfaceUtils.createVerticalSpacer());
     }
 
 }

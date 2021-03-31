@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,7 +40,7 @@ public class ImageViewManipulator<I extends ImageView> extends NodeManipulator<I
         return new ImageViewManipulator<>(new ImageView());
     }
 
-    public static ImageViewManipulator<ImageView> edit(ImageView imageView) {
+    public static <I extends ImageView> ImageViewManipulator<I> edit(final I imageView) {
         return new ImageViewManipulator<>(imageView);
     }
 

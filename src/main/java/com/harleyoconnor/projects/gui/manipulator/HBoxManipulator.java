@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import com.harleyoconnor.projects.gui.util.InterfaceUtils;
 import javafx.collections.ObservableList;
@@ -14,7 +14,12 @@ import javafx.scene.layout.HBox;
  */
 public class HBoxManipulator<H extends HBox> extends PaneManipulator<H, HBoxManipulator<H>> {
 
-    public HBoxManipulator(H hBox) {
+    @SuppressWarnings("unchecked")
+    private HBoxManipulator() {
+        this((H) new HBox());
+    }
+
+    private HBoxManipulator(H hBox) {
         super(hBox);
     }
 
@@ -38,7 +43,7 @@ public class HBoxManipulator<H extends HBox> extends PaneManipulator<H, HBoxMani
         return new HBoxManipulator<>(new HBox());
     }
 
-    public static HBoxManipulator<HBox> of(HBox hBox) {
+    public static <H extends HBox> HBoxManipulator<H> of(final H hBox) {
         return new HBoxManipulator<>(hBox);
     }
 

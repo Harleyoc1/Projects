@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javax.annotation.Nonnull;
 

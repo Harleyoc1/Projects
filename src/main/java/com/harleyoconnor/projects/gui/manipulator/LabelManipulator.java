@@ -1,7 +1,6 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 
 /**
  * A helper class that helps easily manipulate {@link Label} {@link Object}s by
@@ -12,7 +11,12 @@ import javafx.scene.layout.StackPane;
  */
 public class LabelManipulator<L extends Label> extends RegionManipulator<L, LabelManipulator<L>> {
 
-    public LabelManipulator(L label) {
+    @SuppressWarnings("unchecked")
+    private LabelManipulator() {
+        this((L) new Label());
+    }
+
+    private LabelManipulator(L label) {
         super(label);
     }
 
@@ -27,7 +31,11 @@ public class LabelManipulator<L extends Label> extends RegionManipulator<L, Labe
     }
 
     public static LabelManipulator<Label> create() {
-        return new LabelManipulator<>(new Label());
+        return new LabelManipulator<>();
+    }
+
+    public static <L extends Label> LabelManipulator<L> of(final L label) {
+        return new LabelManipulator<>(label);
     }
 
 }

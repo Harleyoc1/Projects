@@ -1,4 +1,4 @@
-package com.harleyoconnor.projects.gui.builder;
+package com.harleyoconnor.projects.gui.manipulator;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -67,7 +67,7 @@ public class StageManipulator<S extends Stage> implements ChainManipulator<S> {
         return this.stage;
     }
 
-    public static <S extends Stage> StageManipulator<S> create() {
+    public static StageManipulator<Stage> create() {
         return new StageManipulator<>();
     }
 
