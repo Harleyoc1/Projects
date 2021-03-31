@@ -1,6 +1,8 @@
 package com.harleyoconnor.projects;
 
-import com.harleyoconnor.projects.objects.Employee;
+import com.harleyoconnor.projects.gui.builder.StackPaneManipulator;
+import com.harleyoconnor.projects.gui.builder.StageManipulator;
+import com.harleyoconnor.projects.object.Employee;
 import com.harleyoconnor.projects.serialisation.util.SQLHelper;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -28,33 +30,17 @@ public final class Projects extends Application {
         LOADING_LOGGER.info(sameEmployee.toString() + " " + sameEmployee.equals(archieAdams) + " Hash Codes: " + archieAdams.hashCode() + " " + sameEmployee.hashCode());
     }
 
-    private final StackPane primaryView = new StackPane();
-    private final Scene primaryScene = new Scene(this.primaryView);
+    private final StackPaneManipulator<StackPane> primaryView = StackPaneManipulator.create();
+    private final Scene primaryScene = new Scene(this.primaryView.get());
+
+    /** Effectively {@code final} variable, holding the primary {@link Stage}. Set in {@link #start(Stage)}. */
+    private StageManipulator<Stage> primaryStage;
 
     @Override
     public void start(final Stage primaryStage) {
-        this.setupBasicProperties(primaryStage).setScene(this.primaryScene);
-
-        primaryStage.show();
-    }
-
-    /**
-     * Sets up basic properties for the main {@link Stage}.
-     *
-     * @param primaryStage The primary {@link Stage} {@link Object}.
-     * @return The {@link Stage} {@link Object} given for chaining.
-     */
-    private Stage setupBasicProperties (final Stage primaryStage) {
-        // Set minimum and default widths and heights.
-        primaryStage.setMinWidth(Constants.MIN_WIDTH);
-        primaryStage.setMinHeight(Constants.MIN_HEIGHT);
-        primaryStage.setWidth(Constants.DEFAULT_WIDTH);
-        primaryStage.setHeight(Constants.DEFAULT_HEIGHT);
-
-        // Set the title of the scene.
-        primaryStage.setTitle("Projects");
-
-        return primaryStage;
+        this.primaryStage = StageManipulator.of(primaryStage).minWidth(Constants.MIN_WIDTH).minHeight(Constants.MIN_HEIGHT)
+                .width(Constants.DEFAULT_WIDTH).height(Constants.DEFAULT_HEIGHT).title("Projects").scene(this.primaryScene)
+                .show();
     }
 
     public static void main (final String[] args) {

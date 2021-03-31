@@ -1,6 +1,6 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.harleyoconnor.projects.serialisation.fields.*;
+import com.harleyoconnor.projects.serialisation.field.*;
 
 import java.sql.ResultSet;
 import java.util.Collection;

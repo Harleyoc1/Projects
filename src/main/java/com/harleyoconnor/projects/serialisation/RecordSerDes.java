@@ -1,8 +1,8 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.harleyoconnor.projects.serialisation.fields.Field;
-import com.harleyoconnor.projects.serialisation.fields.ImmutableField;
-import com.harleyoconnor.projects.serialisation.fields.PrimaryField;
+import com.harleyoconnor.projects.serialisation.field.Field;
+import com.harleyoconnor.projects.serialisation.field.ImmutableField;
+import com.harleyoconnor.projects.serialisation.field.PrimaryField;
 
 import java.util.Set;
 import java.util.stream.Collectors;

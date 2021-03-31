@@ -1,7 +1,7 @@
 package com.harleyoconnor.projects;
 
 import com.harleyoconnor.javautilities.pair.Pair;
-import com.harleyoconnor.projects.serialisation.exceptions.NoSuchRowException;
+import com.harleyoconnor.projects.serialisation.exception.NoSuchRowException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -44,7 +44,8 @@ public final class DatabaseController {
         return resultSet;
     }
 
-    public void updateUnsafe(final String table, final String primaryFieldName, final Object primaryFieldValue, final Pair<String, Object>... valuesToUpdate) {
+    @SafeVarargs
+    public final void updateUnsafe(final String table, final String primaryFieldName, final Object primaryFieldValue, final Pair<String, Object>... valuesToUpdate) {
         try {
             this.update(table, primaryFieldName, primaryFieldValue, valuesToUpdate);
         } catch (final SQLException e) {
@@ -52,7 +53,8 @@ public final class DatabaseController {
         }
     }
 
-    public void update(final String table, final String primaryFieldName, final Object primaryFieldValue, final Pair<String, Object>... valuesToUpdate) throws SQLException {
+    @SafeVarargs
+    public final void update(final String table, final String primaryFieldName, final Object primaryFieldValue, final Pair<String, Object>... valuesToUpdate) throws SQLException {
         final var statementBuilder = new StringBuilder("update " + table + " set ");
 
         for (int i = 0; i < valuesToUpdate.length; i++) {
@@ -67,7 +69,8 @@ public final class DatabaseController {
         this.executePreparedStatement(statementBuilder.toString(), args);
     }
 
-    public void insertUnsafe(final String table, final Pair<String, Object>... valuesToInsert) {
+    @SafeVarargs
+    public final void insertUnsafe(final String table, final Pair<String, Object>... valuesToInsert) {
         try {
             this.insert(table, valuesToInsert);
         } catch (final SQLException e) {
@@ -75,7 +78,8 @@ public final class DatabaseController {
         }
     }
 
-    public void insert(final String table, final Pair<String, Object>... valuesToInsert) throws SQLException {
+    @SafeVarargs
+    public final void insert(final String table, final Pair<String, Object>... valuesToInsert) throws SQLException {
         final var statementBuilder = new StringBuilder("insert into " + table + " (");
 
         for (int i = 0; i < valuesToInsert.length; i++) {

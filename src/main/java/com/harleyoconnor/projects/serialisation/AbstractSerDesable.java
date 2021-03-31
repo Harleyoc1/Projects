@@ -1,7 +1,7 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.harleyoconnor.projects.serialisation.fields.Field;
-import com.harleyoconnor.projects.serialisation.fields.ForeignField;
+import com.harleyoconnor.projects.serialisation.field.Field;
+import com.harleyoconnor.projects.serialisation.field.ForeignField;
 
 import java.util.Objects;
 

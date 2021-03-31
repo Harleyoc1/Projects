@@ -1,0 +1,42 @@
+package com.harleyoconnor.projects.serialisation.field;
+
+import com.harleyoconnor.projects.serialisation.SerDesable;
+
+import javax.annotation.Nullable;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
+/**
+ * A {@code mutable} ({@code non-final}) implementation of {@link Field}.
+ *
+ * <p>Provides an implementation of {@link #set(SerDesable, Object)} which calls the
+ * given {@link BiConsumer} with the relevant parameters.</p>
+ *
+ * @param <P> The type of the parent {@link Class}.
+ * @param <T> The type of the {@code field}.
+ * @author Harley O'Connor
+ * @see Field
+ * @see ImmutableField
+ */
+public class MutableField<P extends SerDesable<P, ?>, T> extends AbstractField<P, T> {
+
+    /** A {@link BiConsumer} setter for {@link T}. */
+    private final BiConsumer<P, T> setter;
+
+    public MutableField(String name, Class<P> parentType, Class<T> fieldType, boolean unqiue, Function<P, T> getter, BiConsumer<P, T> setter) {
+        super(name, parentType, fieldType, unqiue, getter);
+        this.setter = setter;
+    }
+
+    @Override
+    public boolean isMutable() {
+        return true;
+    }
+
+    @Override
+    public Field<P, T> set(P object, @Nullable T newValue) {
+        this.setter.accept(object, newValue);
+        return this;
+    }
+
+}

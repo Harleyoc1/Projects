@@ -1,7 +1,7 @@
 package com.harleyoconnor.projects.serialisation.util;
 
 import com.harleyoconnor.javautilities.function.ThrowableBiFunction;
-import com.harleyoconnor.projects.serialisation.exceptions.NoSuchColumnException;
+import com.harleyoconnor.projects.serialisation.exception.NoSuchColumnException;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;

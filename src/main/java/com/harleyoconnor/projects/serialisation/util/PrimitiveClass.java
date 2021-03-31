@@ -1,6 +1,6 @@
 package com.harleyoconnor.projects.serialisation.util;
 
-import com.harleyoconnor.projects.containers.MapContainer;
+import com.harleyoconnor.projects.util.MapContainer;
 
 import java.util.Map;
 

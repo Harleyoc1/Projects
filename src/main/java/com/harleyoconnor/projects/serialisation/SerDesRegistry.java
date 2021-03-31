@@ -1,6 +1,6 @@
 package com.harleyoconnor.projects.serialisation;
 
-import com.harleyoconnor.projects.serialisation.exceptions.NoSuchSerDesException;
+import com.harleyoconnor.projects.serialisation.exception.NoSuchSerDesException;
 
 import java.util.HashSet;
 import java.util.Optional;

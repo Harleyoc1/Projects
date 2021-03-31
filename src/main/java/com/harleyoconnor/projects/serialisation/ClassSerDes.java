@@ -1,7 +1,7 @@
 package com.harleyoconnor.projects.serialisation;
 
 import com.google.common.collect.ImmutableSet;
-import com.harleyoconnor.projects.serialisation.fields.*;
+import com.harleyoconnor.projects.serialisation.field.*;
 import com.harleyoconnor.projects.serialisation.util.ResultSetConversions;
 
 import java.sql.ResultSet;
