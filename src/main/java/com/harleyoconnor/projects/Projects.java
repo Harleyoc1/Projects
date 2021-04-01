@@ -4,7 +4,10 @@ import com.harleyoconnor.projects.gui.SignInScreen;
 import com.harleyoconnor.projects.gui.manipulator.SceneManipulator;
 import com.harleyoconnor.projects.gui.manipulator.StackPaneManipulator;
 import com.harleyoconnor.projects.gui.manipulator.StageManipulator;
+import com.harleyoconnor.projects.gui.stylesheets.StylesheetManager;
+import com.harleyoconnor.projects.gui.stylesheets.ThemedStylesheet;
 import com.harleyoconnor.projects.object.Employee;
+import com.harleyoconnor.projects.os.SystemManager;
 import com.harleyoconnor.projects.serialisation.util.SQLHelper;
 import com.harleyoconnor.projects.util.Injected;
 import com.harleyoconnor.projects.util.ReflectionHelper;
@@ -24,6 +27,8 @@ public final class Projects extends Application {
             SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT,
                     DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
 
+    public static final StylesheetManager STYLESHEET_MANAGER = new StylesheetManager();
+
     @Injected
     public static final Projects INSTANCE = null;
 
@@ -34,6 +39,7 @@ public final class Projects extends Application {
     private final StageManipulator<Stage> primaryStage = null;
 
     private Employee currentEmployee;
+    private SystemManager.Theme lastTheme;
 
     public Projects() {
         ReflectionHelper.setFieldUnchecked(this.getClass(), "INSTANCE", this);
@@ -48,6 +54,9 @@ public final class Projects extends Application {
         this.primaryStage.minWidth(Constants.MIN_WIDTH).minHeight(Constants.MIN_HEIGHT)
                 .width(Constants.DEFAULT_WIDTH).height(Constants.DEFAULT_HEIGHT).title("Projects")
                 .scene(this.primaryScene.get()).show();
+
+        // Add the default stylesheet.
+        STYLESHEET_MANAGER.addStylesheet(this.primaryScene.get().getStylesheets(), new ThemedStylesheet("default"));
 
         new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
     }

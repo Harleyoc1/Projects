@@ -122,9 +122,14 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
         this.department = department;
     }
 
-    @Override
-    public SerDes<Employee, Integer> getSerDes() {
-        return SER_DES;
+    /**
+     * Checks if this {@link Employee} is the {@code head} of their {@link Department}.
+     *
+     * @return {@code true} if this {@link Employee} is head of their {@link Department};
+     *         {@code false} if not.
+     */
+    public boolean isHead() {
+        return this.department.getHead().equals(this);
     }
 
     /**
@@ -137,6 +142,11 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
      */
     public boolean authenticate(final String password) {
         return HASH_MANAGER.authenticate(this.password, password);
+    }
+
+    @Override
+    public SerDes<Employee, Integer> getSerDes() {
+        return SER_DES;
     }
 
 }

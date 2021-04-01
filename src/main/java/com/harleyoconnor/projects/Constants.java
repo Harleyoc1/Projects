@@ -6,6 +6,15 @@ package com.harleyoconnor.projects;
 public final class Constants {
 
     ////////////////////////////////////////////////
+    // Resources
+    ////////////////////////////////////////////////
+
+    public static final String FILE = "file:";
+    public static final String STYLESHEETS = "stylesheets/";
+
+    public static final String CSS = ".css";
+
+    ////////////////////////////////////////////////
     // Stylesheet Classes
     ////////////////////////////////////////////////
 
