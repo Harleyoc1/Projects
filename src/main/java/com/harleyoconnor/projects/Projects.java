@@ -7,10 +7,10 @@ import com.harleyoconnor.projects.gui.manipulator.StageManipulator;
 import com.harleyoconnor.projects.gui.stylesheets.StylesheetManager;
 import com.harleyoconnor.projects.gui.stylesheets.ThemedStylesheet;
 import com.harleyoconnor.projects.object.Employee;
-import com.harleyoconnor.projects.os.SystemManager;
-import com.harleyoconnor.projects.serialisation.util.SQLHelper;
 import com.harleyoconnor.projects.util.Injected;
 import com.harleyoconnor.projects.util.ReflectionHelper;
+import com.harleyoconnor.serdes.database.Database;
+import com.harleyoconnor.serdes.util.SQLHelper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  */
 public final class Projects extends Application {
 
-    private static final DatabaseController DATABASE_CONTROLLER = new DatabaseController(
+    private static final Database DATABASE = new Database(
             SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT,
                     DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
 
@@ -39,7 +39,6 @@ public final class Projects extends Application {
     private final StageManipulator<Stage> primaryStage = null;
 
     private Employee currentEmployee;
-    private SystemManager.Theme lastTheme;
 
     public Projects() {
         ReflectionHelper.setFieldUnchecked(this.getClass(), "INSTANCE", this);
@@ -74,8 +73,8 @@ public final class Projects extends Application {
         launch(args);
     }
 
-    public static DatabaseController getDatabaseController() {
-        return DATABASE_CONTROLLER;
+    public static Database getDatabase() {
+        return DATABASE;
     }
 
 }

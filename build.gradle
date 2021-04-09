@@ -46,6 +46,9 @@ dependencies {
     // Java Utilities - my own miscellaneous utility classes.
     implementation group: 'com.harleyoconnor.javautilities', name: 'JavaUtilities', version: config.javautilities_version
 
+    // SerDes - my API for SQL serialisation and deserialisation.
+    implementation group: 'com.harleyoconnor.serdes', name: 'SerDes', version: config.serdes_version
+
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: config.junit_version
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
 }

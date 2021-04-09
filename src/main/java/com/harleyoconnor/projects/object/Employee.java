@@ -1,13 +1,14 @@
 package com.harleyoconnor.projects.object;
 
 import com.harleyoconnor.projects.Projects;
-import com.harleyoconnor.projects.serialisation.AbstractSerDesable;
-import com.harleyoconnor.projects.serialisation.ClassSerDes;
-import com.harleyoconnor.projects.serialisation.SerDes;
-import com.harleyoconnor.projects.serialisation.field.Field;
-import com.harleyoconnor.projects.serialisation.field.MutableField;
-import com.harleyoconnor.projects.serialisation.field.PrimaryField;
 import com.harleyoconnor.projects.util.HashManager;
+import com.harleyoconnor.serdes.ClassSerDes;
+import com.harleyoconnor.serdes.IndexedSerDesable;
+import com.harleyoconnor.serdes.SerDes;
+import com.harleyoconnor.serdes.database.Database;
+import com.harleyoconnor.serdes.field.Field;
+import com.harleyoconnor.serdes.field.MutableField;
+import com.harleyoconnor.serdes.field.PrimaryField;
 
 import java.time.Instant;
 import java.util.Date;
@@ -15,11 +16,11 @@ import java.util.Date;
 /**
  * @author Harley O'Connor
  */
-public final class Employee extends AbstractSerDesable<Employee, Integer> {
+public final class Employee extends IndexedSerDesable<Employee> {
 
     private static final HashManager HASH_MANAGER = new HashManager();
 
-    public static final PrimaryField<Employee, Integer> PRIMARY_FIELD = new PrimaryField<>("id", Employee.class, Integer.class, Employee::getId);
+    public static final PrimaryField<Employee, Integer> PRIMARY_FIELD = createPrimaryField(Employee.class);
     public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, Employee::getEmail, Employee::setEmail);
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
@@ -31,16 +32,15 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
             .field("wage", Double.class, Employee::getWage, Employee::setWage)
             .field("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
 
-    public static Employee fromEmail(final String email) {
+    public static Employee fromEmail(final Database database, final String email) {
         return SER_DES.getLoadedObjects().stream().filter(employee -> employee.getEmail().equals(email)).findFirst()
-                .orElseGet(() -> SER_DES.deserialise(Projects.getDatabaseController().selectUnsafe(SER_DES.getTable(), EMAIL_FIELD.getName(), email)));
+                .orElseGet(() -> SER_DES.deserialise(database, database.selectUnchecked(SER_DES.getTable(), EMAIL_FIELD.getName(), email)));
     }
 
     public static boolean emailExists(final String email) {
-        return Projects.getDatabaseController().valueExists(SER_DES.getTable(), EMAIL_FIELD.getName(), email);
+        return Projects.getDatabase().valueExists(SER_DES.getTable(), EMAIL_FIELD.getName(), email);
     }
 
-    private final int id;
     private final Date hireDate;
 
     private String firstName;
@@ -52,22 +52,18 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
     private Department department;
 
     public Employee(int id, Date hireDate) {
-        this.id = id;
+        super(id);
         this.hireDate = hireDate;
     }
 
-    public Employee(String firstName, String lastName, String email, String password, Department department) {
-        this.id = Projects.getDatabaseController().getMaxOrDefault(SER_DES.getTable(), PRIMARY_FIELD.getName(), 1) + 1;
+    public Employee(Database database, String firstName, String lastName, String email, String password, Department department) {
+        super(database);
         this.hireDate = Date.from(Instant.now());
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = HASH_MANAGER.hash(password);
         this.department = department;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Date getHireDate() {
@@ -142,6 +138,11 @@ public final class Employee extends AbstractSerDesable<Employee, Integer> {
      */
     public boolean authenticate(final String password) {
         return HASH_MANAGER.authenticate(this.password, password);
+    }
+
+    @Override
+    public PrimaryField<Employee, Integer> getPrimaryField() {
+        return PRIMARY_FIELD;
     }
 
     @Override
