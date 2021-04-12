@@ -13,13 +13,16 @@ public final class Department extends IndexedSerDesable<Department> {
 
     public static final PrimaryField<Department, Integer> PRIMARY_FIELD = createPrimaryField(Department.class);
 
-    public static final SerDes<Department, Integer> SER_DES = ClassSerDes.Builder.of(Department.class, Integer.class)
-            .primaryField(PRIMARY_FIELD)
+    public static final SerDes<Department, Integer> SER_DES = ClassSerDes.Builder.of(Department.class, Integer.class).primaryField(PRIMARY_FIELD)
             .uniqueField("name", String.class, Department::getName, Department::setName)
             .field("head", Employee.PRIMARY_FIELD, Department::getHead, Department::setHead).build();
 
     private String name;
     private Employee head;
+
+    public Department(int id) {
+        super(id);
+    }
 
     public Department(Database database, String name, Employee head) {
         super(database);
@@ -27,20 +30,46 @@ public final class Department extends IndexedSerDesable<Department> {
         this.head = head;
     }
 
+    /**
+     * Gets the {@link #name} for this {@link Department} object.
+     *
+     * @return The {@link #name} for this {@link Department} object.
+     */
     public String getName() {
-        return name;
+        return this.name;
     }
 
-    public void setName(String name) {
+    /**
+     * Sets the {@link #name} for this {@link Department} object
+     * to the given {@code name}.
+     *
+     * @param name The new {@link String} object to set.
+     * @return This {@link Department} object for chaining.
+     */
+    public Department setName(String name) {
         this.name = name;
+        return this;
     }
 
+    /**
+     * Gets the {@link #head} for this {@link Department} object.
+     *
+     * @return The {@link #head} for this {@link Department} object.
+     */
     public Employee getHead() {
-        return head;
+        return this.head;
     }
 
-    public void setHead(Employee head) {
+    /**
+     * Sets the {@link #head} for this {@link Department} object
+     * to the given {@code head}.
+     *
+     * @param head The new {@link Employee} object to set.
+     * @return This {@link Department} object for chaining.
+     */
+    public Department setHead(Employee head) {
         this.head = head;
+        return this;
     }
 
     @Override

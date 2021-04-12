@@ -9,6 +9,8 @@ import java.util.TimerTask;
  */
 public final class Scheduler {
 
+    private Scheduler() {}
+
     public static void schedule(final Runnable runnable, final Duration period) {
         schedule(runnable, 0, period.toMillis());
     }

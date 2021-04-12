@@ -14,6 +14,8 @@ import javafx.scene.layout.VBox;
  */
 public final class InterfaceUtils {
 
+    private InterfaceUtils() {}
+
     public static Region createHorizontalSpacer() {
         final Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);

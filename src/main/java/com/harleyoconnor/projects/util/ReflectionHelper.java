@@ -6,9 +6,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
+ * Holds various utility methods for aiding with reflection.
+ *
  * @author Harley O'Connor
  */
 public final class ReflectionHelper {
+
+    private ReflectionHelper() {}
 
     public static void setFieldUnchecked(final Object object, final String name, final Object value) {
         try {

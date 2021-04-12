@@ -13,6 +13,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
+ * This {@link Screen} for signing in.
+ *
  * @author Harley O'Connor
  */
 public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
@@ -23,7 +25,12 @@ public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
 
     public SignInScreen(StageManipulator<Stage> stage, SceneManipulator<Scene> scene, PaneManipulator<Pane, ?> parentView, Screen<?, ?> previousScreen) {
         super(stage, scene, parentView, previousScreen, "Sign In");
-        this.setupLayout();
+
+        // Sets up the layout.
+        this.layout.add(VBoxManipulator.create().add(LabelManipulator.create().text("Sign In").title().wrapText(), this.emailField, this.passwordField,
+                HBoxManipulator.create().add(RegionManipulator.horizontalSpacer(),
+                        ButtonManipulator.create().text("Sign In").onAction(this::onSignInPress)),
+                this.errorLabel).spacing().fixWidth(300).padding(25).centre()).centre();
     }
 
     @Override
@@ -31,12 +38,13 @@ public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
         return HBoxManipulator.create();
     }
 
-    private void setupLayout() {
-        this.layout.add(VBoxManipulator.create().add(LabelManipulator.create().text("Sign In").title().wrapText(), this.emailField, this.passwordField,
-                HBoxManipulator.create().add(RegionManipulator.horizontalSpacer(), ButtonManipulator.create().text("Sign In").onAction(this::onSignInPress)),
-                this.errorLabel).spacing().fixWidth(300).padding(25).centre()).centre();
-    }
-
+    /**
+     * Executed when the {@code sign in} {@link javafx.scene.control.Button} is pressed,
+     * or when enter is pressed whilst {@link #emailField} or {@link #passwordField} are
+     * in focus.
+     *
+     * @param event The {@link Event} instance.
+     */
     private void onSignInPress(final Event event) {
         final var email = this.emailField.get().getText();
 

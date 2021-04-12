@@ -23,16 +23,34 @@ public final class HashManager {
     private final int size;
     private final int cost;
 
+    /**
+     * Creates a new {@link HashManager} with the default hashing algorithm
+     * ({@code PBKDF2WithHmacSHA1}), the default {@link #size} ({@code 128}),
+     * and the default {@link #cost} ({@code 65536}).
+     *
+     * @see #HashManager(String, int, int)
+     */
     public HashManager() {
         this("PBKDF2WithHmacSHA1", 128, 65536);
     }
 
+    /**
+     * Creates a new {@link HashManager} with a custom {@code hashAlgorithm},
+     * {@link #size}, and {@link #cost}.
+     *
+     * @param hashAlgorithm The name of the {@code hashAlgorithm} to use.
+     * @param size The size to use for hashing.
+     * @param cost The cost to use for hashing.
+     * @throws RuntimeException If attempt to get hashing algorithm from given
+     *                          name threw {@link NoSuchAlgorithmException}.
+     * @see #HashManager()
+     */
     public HashManager(String hashAlgorithm, int size, int cost) {
         try {
             this.keyFactory = SecretKeyFactory.getInstance(hashAlgorithm);
         } catch (final NoSuchAlgorithmException e) {
             // This should never happen, but but if it does throw an exception.
-            throw new RuntimeException("Couldn't find algorithm '" + hashAlgorithm + "'.");
+            throw new RuntimeException("Couldn't find algorithm '" + hashAlgorithm + "'.", e);
         }
 
         this.size = size;
@@ -96,6 +114,14 @@ public final class HashManager {
         return true;
     }
 
+    /**
+     * Generates a new hash from the given character based on the given
+     * {@code salt}.
+     *
+     * @param charsToHash The characters to create a hash from.
+     * @param salt The {@code salt} to use.
+     * @return The generated hash.
+     */
     private byte[] generateHash (char[] charsToHash, byte[] salt) {
         // Create KeySpec object from the characters and salt with the cost and key length constants.
         final KeySpec spec = new PBEKeySpec(charsToHash, salt, this.cost, this.size);
@@ -104,7 +130,7 @@ public final class HashManager {
             // Generate the hash from the secret key factory.
             return this.keyFactory.generateSecret(spec).getEncoded();
         } catch (final InvalidKeySpecException e) {
-            throw new RuntimeException("Unable to generate hash.");
+            throw new RuntimeException("Unable to generate hash.", e);
         }
     }
 

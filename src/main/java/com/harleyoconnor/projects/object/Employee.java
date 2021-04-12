@@ -24,8 +24,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
     public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, Employee::getEmail, Employee::setEmail);
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
-            .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate)
-            .field(EMAIL_FIELD)
+            .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate).field(EMAIL_FIELD)
             .field("first_name", String.class, Employee::getFirstName, Employee::setFirstName)
             .field("last_name", String.class, Employee::getLastName, Employee::setLastName)
             .field("password", String.class, Employee::getPassword, Employee::setPassword)
@@ -66,56 +65,139 @@ public final class Employee extends IndexedSerDesable<Employee> {
         this.department = department;
     }
 
+    /**
+     * Gets the {@link #hireDate} for this {@link Employee} object.
+     *
+     * @return The {@link #hireDate} for this {@link Employee} object.
+     */
     public Date getHireDate() {
-        return hireDate;
+        return this.hireDate;
     }
 
+    /**
+     * Gets the {@link #firstName} for this {@link Employee} object.
+     *
+     * @return The {@link #firstName} for this {@link Employee} object.
+     */
     public String getFirstName() {
-        return firstName;
+        return this.firstName;
     }
 
-    public void setFirstName(String firstName) {
+    /**
+     * Sets the {@link #firstName} for this {@link Employee} object
+     * to the given {@code firstName}.
+     *
+     * @param firstName The new {@link String} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
+    /**
+     * Gets the {@link #lastName} for this {@link Employee} object.
+     *
+     * @return The {@link #lastName} for this {@link Employee} object.
+     */
     public String getLastName() {
-        return lastName;
+        return this.lastName;
     }
 
-    public void setLastName(String lastName) {
+    /**
+     * Sets the {@link #lastName} for this {@link Employee} object
+     * to the given {@code lastName}.
+     *
+     * @param lastName The new {@link String} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
+    /**
+     * Gets the {@link #email} for this {@link Employee} object.
+     *
+     * @return The {@link #email} for this {@link Employee} object.
+     */
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
-    public void setEmail(String email) {
+    /**
+     * Sets the {@link #email} for this {@link Employee} object
+     * to the given {@code email}.
+     *
+     * @param email The new {@link String} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setEmail(String email) {
         this.email = email;
+        return this;
     }
 
+    /**
+     * Gets the {@link #password} for this {@link Employee} object.
+     *
+     * @return The {@link #password} for this {@link Employee} object.
+     */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
-    public void setPassword(String password) {
-        this.password = HASH_MANAGER.hash(password);
+    /**
+     * Sets the {@link #password} for this {@link Employee} object
+     * to the given {@code password}.
+     *
+     * @param password The new {@link String} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setPassword(String password) {
+        this.password = password;
+        return this;
     }
 
+    /**
+     * Gets the {@link #wage} for this {@link Employee} object.
+     *
+     * @return The {@link #wage} for this {@link Employee} object.
+     */
     public double getWage() {
-        return wage;
+        return this.wage;
     }
 
-    public void setWage(double wage) {
+    /**
+     * Sets the {@link #wage} for this {@link Employee} object
+     * to the given {@code wage}.
+     *
+     * @param wage The new {@code double} to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setWage(double wage) {
         this.wage = wage;
+        return this;
     }
 
+    /**
+     * Gets the {@link #department} for this {@link Employee} object.
+     *
+     * @return The {@link #department} for this {@link Employee} object.
+     */
     public Department getDepartment() {
-        return department;
+        return this.department;
     }
 
-    public void setDepartment(Department department) {
+    /**
+     * Sets the {@link #department} for this {@link Employee} object
+     * to the given {@code department}.
+     *
+     * @param department The new {@link Department} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee setDepartment(Department department) {
         this.department = department;
+        return this;
     }
 
     /**

@@ -14,7 +14,7 @@ package com.harleyoconnor.projects.os;
 public interface SystemManager {
 
     /** Stores the {@link SystemManager} for the current system. */
-    SystemManager SYSTEM_MANAGER = System.getProperty("os.name").equals(MacOSManager.NAME) ? new MacOSManager() : new UnsupportedManager();
+    SystemManager SYSTEM_MANAGER = getForOS();
 
     /**
      * Gets the operating system's name. This should match the result of a call to
@@ -41,6 +41,13 @@ public interface SystemManager {
 
     static SystemManager get() {
         return SYSTEM_MANAGER;
+    }
+
+    private static SystemManager getForOS() {
+        return switch (System.getProperty("os.name")) {
+            case MacOSManager.NAME -> new MacOSManager();
+            default -> new UnsupportedManager();
+        };
     }
 
 }
