@@ -66,6 +66,7 @@ public final class Projects extends Application {
         // Reset database connection every 15 minutes (this may move to SerDes at some point).
         Scheduler.schedule(this::resetDatabase, Duration.ofMinutes(15));
 
+        // Create and show the sign in screen.
         new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
     }
 
