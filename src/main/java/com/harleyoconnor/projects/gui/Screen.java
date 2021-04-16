@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import javax.annotation.Nullable;
+
 /**
  * This class holds common capabilities necessary for different {@link #layout}s, such as
  * {@link #toNewScreen(Screen)} to smoothly transition to new screens.
@@ -30,7 +32,7 @@ public abstract class Screen<P extends Pane, PM extends PaneManipulator<P, PM>> 
 
     private boolean inFocus;
 
-    public Screen(final StageManipulator<Stage> stage, final SceneManipulator<Scene> scene, final PaneManipulator<Pane, ?> parentView, final Screen<?, ?> previousScreen, final String initialTitle) {
+    public Screen(final StageManipulator<Stage> stage, final SceneManipulator<Scene> scene, final PaneManipulator<Pane, ?> parentView, @Nullable final Screen<?, ?> previousScreen, final String initialTitle) {
         this.stage = stage;
         this.scene = scene;
         this.parentView = parentView;

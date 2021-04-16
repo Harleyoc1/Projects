@@ -61,10 +61,11 @@ public final class Projects extends Application {
                 .scene(this.primaryScene.get()).show();
 
         // Add the default stylesheet.
-        STYLESHEET_MANAGER.addStylesheet(this.primaryScene.get().getStylesheets(), new ThemedStylesheet("default"));
+        STYLESHEET_MANAGER.addStylesheets(this.primaryScene.get().getStylesheets(), new ThemedStylesheet("default"));
 
         // Reset database connection every 15 minutes (this may move to SerDes at some point).
         Scheduler.schedule(this::resetDatabase, Duration.ofMinutes(15));
+//        Employee.SER_DES.createTable(DATABASE);
 
         // Create and show the sign in screen.
         new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
@@ -73,7 +74,7 @@ public final class Projects extends Application {
     /**
      * Resets the {@link #DATABASE} connection, since if left for a while the connection can drop.
      */
-    private void resetDatabase () {
+    private void resetDatabase() {
         DATABASE = new Database(SQLHelper.getConnectionUnsafe("mariadb", DatabaseConstants.IP, DatabaseConstants.PORT,
                 DatabaseConstants.SCHEMA, DatabaseConstants.USERNAME, DatabaseConstants.PASSWORD));
     }

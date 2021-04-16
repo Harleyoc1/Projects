@@ -34,15 +34,39 @@ public interface SystemManager {
     /**
      * Gets the current {@link Theme} for the operating system.
      *
+     * <p>Implementations should set a {@code lastTheme} in this method, which can
+     * be queried from {@link #getLastTheme()}.</p>
+     *
      * @return The current {@link Theme}, or {@link Theme#LIGHT} as a default if
      *         it could not be found.
      */
     Theme getTheme();
 
+    /**
+     * Gets the {@link Theme} last recorded from a {@link #getTheme()} query.
+     *
+     * @return The last recorded {@link Theme}.
+     */
+    Theme getLastTheme();
+
+    /**
+     * Returns the {@link SystemManager} for the detected operating system running
+     * the JVM.
+     *
+     * @return The {@link SystemManager} for the detected operating system.
+     */
     static SystemManager get() {
         return SYSTEM_MANAGER;
     }
 
+    /**
+     * Gets the appropriate {@link SystemManager} for the operating system
+     * currently running the JVM.
+     *
+     * <p>The result of this is stored in {@link #SYSTEM_MANAGER}.</p>
+     *
+     * @return The {@link SystemManager} for the current operating system.
+     */
     private static SystemManager getForOS() {
         return switch (System.getProperty("os.name")) {
             case MacOSManager.NAME -> new MacOSManager();

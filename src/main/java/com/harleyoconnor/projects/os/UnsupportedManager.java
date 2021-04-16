@@ -11,7 +11,7 @@ public final class UnsupportedManager implements SystemManager {
     public static final String UNSUPPORTED = "Unsupported";
 
     /**
-     * @return {@link #UNSUPPORTED}.
+     * @return {@link #UNSUPPORTED}
      */
     @Override
     public String getSystemName() {
@@ -23,6 +23,14 @@ public final class UnsupportedManager implements SystemManager {
      */
     @Override
     public Theme getTheme() {
+        return Theme.LIGHT;
+    }
+
+    /**
+     * @return {@link Theme#LIGHT}
+     */
+    @Override
+    public Theme getLastTheme() {
         return Theme.LIGHT;
     }
 

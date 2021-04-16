@@ -21,12 +21,13 @@ public final class Employee extends IndexedSerDesable<Employee> {
     private static final HashManager HASH_MANAGER = new HashManager();
 
     public static final PrimaryField<Employee, Integer> PRIMARY_FIELD = createPrimaryField(Employee.class);
-    public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, Employee::getEmail, Employee::setEmail);
+    public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, false, Employee::getEmail, Employee::setEmail);
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
-            .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate).field(EMAIL_FIELD)
+            .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate)
             .field("first_name", String.class, Employee::getFirstName, Employee::setFirstName)
             .field("last_name", String.class, Employee::getLastName, Employee::setLastName)
+            .field(EMAIL_FIELD)
             .field("password", String.class, Employee::getPassword, Employee::setPassword)
             .field("wage", Double.class, Employee::getWage, Employee::setWage)
             .field("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();

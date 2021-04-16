@@ -12,6 +12,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import javax.annotation.Nullable;
+
 /**
  * This {@link Screen} for signing in.
  *
@@ -19,17 +21,17 @@ import javafx.stage.Stage;
  */
 public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
 
-    private final TextFieldManipulator<TextField> emailField = TextFieldManipulator.create().placeholder("Email").onEnter(this::onSignInPress);
-    private final TextFieldManipulator<PasswordField> passwordField = TextFieldManipulator.of(new PasswordField()).placeholder("Password").onEnter(this::onSignInPress);
+    private final TextFieldManipulator<TextField> emailField = TextFieldManipulator.create().border().background().body().placeholder("Email").onEnter(this::onSignInPress);
+    private final TextFieldManipulator<PasswordField> passwordField = TextFieldManipulator.of(new PasswordField()).border().background().body().placeholder("Password").onEnter(this::onSignInPress);
     private final LabelManipulator<Label> errorLabel = LabelManipulator.create().body().wrapText();
 
-    public SignInScreen(StageManipulator<Stage> stage, SceneManipulator<Scene> scene, PaneManipulator<Pane, ?> parentView, Screen<?, ?> previousScreen) {
+    public SignInScreen(StageManipulator<Stage> stage, SceneManipulator<Scene> scene, PaneManipulator<Pane, ?> parentView, @Nullable Screen<?, ?> previousScreen) {
         super(stage, scene, parentView, previousScreen, "Sign In");
 
         // Sets up the layout.
         this.layout.add(VBoxManipulator.create().add(LabelManipulator.create().text("Sign In").title().wrapText(), this.emailField, this.passwordField,
                 HBoxManipulator.create().add(RegionManipulator.horizontalSpacer(),
-                        ButtonManipulator.create().text("Sign In").onAction(this::onSignInPress)),
+                        ButtonManipulator.create().border().background().body().text("Sign In").onAction(this::onSignInPress)),
                 this.errorLabel).spacing().fixWidth(300).padding(25).centre()).centre();
     }
 

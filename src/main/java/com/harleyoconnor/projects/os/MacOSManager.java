@@ -60,4 +60,14 @@ public final class MacOSManager implements SystemManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return The last recorded {@link Theme}.
+     */
+    @Override
+    public Theme getLastTheme() {
+        return this.lastTheme;
+    }
+
 }

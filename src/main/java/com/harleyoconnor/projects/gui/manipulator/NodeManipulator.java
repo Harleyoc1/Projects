@@ -32,12 +32,30 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
     }
 
     /**
+     * Adds border style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM border() {
+        return this.styleClasses(Constants.BORDER);
+    }
+
+    /**
+     * Adds background style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM background() {
+        return this.styleClasses(Constants.BACKGROUND);
+    }
+
+    /**
      * Adds title style class to the {@link Node}.
      *
      * @return This {@link Node} builder.
      */
     public NM title() {
-        return this.styleClasses(Constants.TITLE);
+        return this.styleClasses(Constants.TITLE, Constants.TEXT);
     }
 
     /**
@@ -46,7 +64,7 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
      * @return This {@link Node} builder.
      */
     public NM body() {
-        return this.styleClasses(Constants.BODY);
+        return this.styleClasses(Constants.BODY, Constants.TEXT);
     }
 
     /**

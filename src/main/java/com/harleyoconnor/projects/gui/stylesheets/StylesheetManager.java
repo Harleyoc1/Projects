@@ -30,12 +30,15 @@ public final class StylesheetManager {
         Scheduler.schedule(this::update, Duration.ofSeconds(1));
     }
 
-    public void addStylesheet(final ObservableList<String> stylesheets, final Stylesheet stylesheet) {
-        this.stylesheets.computeIfAbsent(stylesheets, k -> new HashSet<>()).add(stylesheet.add(stylesheets));
-    }
-
     public void addStylesheets(final ObservableList<String> stylesheets, final Stylesheet... stylesheetsToAdd) {
-        this.stylesheets.computeIfAbsent(stylesheets, k -> new HashSet<>()).addAll(Stream.of(stylesheetsToAdd).map(stylesheet -> stylesheet.add(stylesheets)).collect(Collectors.toSet()));
+        // Add the given sheet paths to the given stylesheets and collect them into a set.
+        final Set<Stylesheet> sheetsToAdd = Stream.of(stylesheetsToAdd).map(stylesheet -> stylesheet.add(stylesheets)).collect(Collectors.toUnmodifiableSet());
+
+        // Update their theme, in case its not set to their default.
+        this.updateThemedStylesheets(this.lastTheme, stylesheets, sheetsToAdd);
+
+        // Add the stylesheets to the main stylesheet map.
+        this.stylesheets.computeIfAbsent(stylesheets, k -> new HashSet<>()).addAll(sheetsToAdd);
     }
 
     /**
@@ -46,17 +49,18 @@ public final class StylesheetManager {
         final var newTheme = SystemManager.get().getTheme();
 
         if (newTheme != this.lastTheme) {
-            this.stylesheets.forEach((stylesheetList, stylesheets) -> {
-                stylesheets.forEach(stylesheet -> {
-                    if (!(stylesheet instanceof ThemedStylesheet))
-                        return;
-
-                    ((ThemedStylesheet) stylesheet).themeChanged(stylesheetList, this.lastTheme, newTheme);
-                });
-            });
+            this.stylesheets.forEach((stylesheetList, stylesheets) ->
+                    this.updateThemedStylesheets(newTheme, stylesheetList, stylesheets));
 
             this.lastTheme = newTheme;
         }
+    }
+
+    private void updateThemedStylesheets(SystemManager.Theme newTheme, ObservableList<String> stylesheetList, Set<Stylesheet> stylesheets) {
+        stylesheets.forEach(stylesheet -> {
+            if (stylesheet instanceof ThemedStylesheet)
+                ((ThemedStylesheet) stylesheet).themeChanged(stylesheetList, this.lastTheme, newTheme);
+        });
     }
 
 }

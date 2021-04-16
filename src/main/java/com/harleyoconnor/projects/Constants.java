@@ -18,8 +18,13 @@ public final class Constants {
     // Stylesheet Classes
     ////////////////////////////////////////////////
 
+    public static final String BORDER = "border";
+    public static final String BACKGROUND = "background";
+
     public static final String TITLE = "title";
     public static final String BODY = "body";
+
+    public static final String TEXT = "text";
 
     ////////////////////////////////////////////////
     // Layouts
