@@ -3,8 +3,14 @@ package com.harleyoconnor.projects.object;
 import com.harleyoconnor.serdes.ClassSerDes;
 import com.harleyoconnor.serdes.IndexedSerDesable;
 import com.harleyoconnor.serdes.SerDes;
-import com.harleyoconnor.serdes.database.Database;
+import com.harleyoconnor.serdes.database.DefaultDatabase;
+import com.harleyoconnor.serdes.exception.NoSuchRowException;
 import com.harleyoconnor.serdes.field.PrimaryField;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Harley O'Connor
@@ -15,7 +21,7 @@ public final class Department extends IndexedSerDesable<Department> {
 
     public static final SerDes<Department, Integer> SER_DES = ClassSerDes.Builder.of(Department.class, Integer.class).primaryField(PRIMARY_FIELD)
             .uniqueField("name", String.class, Department::getName, Department::setName)
-            .field("head", Employee.PRIMARY_FIELD, Department::getHead, Department::setHead).build();
+            .nullableField("head", Employee.PRIMARY_FIELD, Department::getHead, Department::setHead).build();
 
     private String name;
     private Employee head;
@@ -24,8 +30,11 @@ public final class Department extends IndexedSerDesable<Department> {
         super(id);
     }
 
-    public Department(Database database, String name, Employee head) {
-        super(database);
+    public Department() {
+    }
+
+    public Department(String name, Employee head) {
+        this();
         this.name = name;
         this.head = head;
     }
@@ -70,6 +79,26 @@ public final class Department extends IndexedSerDesable<Department> {
     public Department setHead(Employee head) {
         this.head = head;
         return this;
+    }
+
+    public List<Employee> getEmployees() {
+        final List<Employee> employees = new LinkedList<>();
+        final var database = DefaultDatabase.get();
+
+        try {
+            final var resultSet = database.select(Employee.SER_DES.getTable(), Employee.DEPARTMENT_FIELD.getName(), this.getId());
+
+            do {
+                employees.add(Employee.SER_DES.deserialise(database, resultSet));
+            } while (resultSet.next());
+
+        } catch (final NoSuchRowException e) {
+            return Collections.emptyList();
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return employees;
     }
 
     @Override

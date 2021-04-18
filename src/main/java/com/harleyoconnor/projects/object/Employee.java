@@ -1,17 +1,19 @@
 package com.harleyoconnor.projects.object;
 
-import com.harleyoconnor.projects.Projects;
 import com.harleyoconnor.projects.util.HashManager;
 import com.harleyoconnor.serdes.ClassSerDes;
 import com.harleyoconnor.serdes.IndexedSerDesable;
 import com.harleyoconnor.serdes.SerDes;
-import com.harleyoconnor.serdes.database.Database;
-import com.harleyoconnor.serdes.field.Field;
-import com.harleyoconnor.serdes.field.MutableField;
-import com.harleyoconnor.serdes.field.PrimaryField;
+import com.harleyoconnor.serdes.database.DefaultDatabase;
+import com.harleyoconnor.serdes.exception.NoSuchRowException;
+import com.harleyoconnor.serdes.field.*;
 
+import java.sql.SQLException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Harley O'Connor
@@ -22,6 +24,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     public static final PrimaryField<Employee, Integer> PRIMARY_FIELD = createPrimaryField(Employee.class);
     public static final Field<Employee, String> EMAIL_FIELD = new MutableField<>("email", Employee.class, String.class, true, false, Employee::getEmail, Employee::setEmail);
+    public static final ForeignField<Employee, Integer, Department> DEPARTMENT_FIELD = new MutableForeignField<>("department_id", Employee.class, Department.PRIMARY_FIELD, false, true, Employee::getDepartment, Employee::setDepartment);
 
     public static final SerDes<Employee, Integer> SER_DES = ClassSerDes.Builder.of(Employee.class, Integer.class)
             .primaryField(PRIMARY_FIELD).field("hire_date", Date.class, Employee::getHireDate)
@@ -30,15 +33,15 @@ public final class Employee extends IndexedSerDesable<Employee> {
             .field(EMAIL_FIELD)
             .field("password", String.class, Employee::getPassword, Employee::setPassword)
             .field("wage", Double.class, Employee::getWage, Employee::setWage)
-            .field("department_id", Department.PRIMARY_FIELD, Employee::getDepartment, Employee::setDepartment).build();
+            .field(DEPARTMENT_FIELD).build();
 
-    public static Employee fromEmail(final Database database, final String email) {
+    public static Employee fromEmail(final String email) {
         return SER_DES.getLoadedObjects().stream().filter(employee -> employee.getEmail().equals(email)).findFirst()
-                .orElseGet(() -> SER_DES.deserialise(database, database.selectUnchecked(SER_DES.getTable(), EMAIL_FIELD.getName(), email)));
+                .orElseGet(() -> SER_DES.deserialise(DefaultDatabase.get().selectUnchecked(SER_DES.getTable(), EMAIL_FIELD.getName(), email)));
     }
 
     public static boolean emailExists(final String email) {
-        return Projects.getDatabase().valueExists(SER_DES.getTable(), EMAIL_FIELD.getName(), email);
+        return DefaultDatabase.get().valueExists(SER_DES.getTable(), EMAIL_FIELD.getName(), email);
     }
 
     private final Date hireDate;
@@ -56,9 +59,12 @@ public final class Employee extends IndexedSerDesable<Employee> {
         this.hireDate = hireDate;
     }
 
-    public Employee(Database database, String firstName, String lastName, String email, String password, Department department) {
-        super(database);
+    public Employee() {
         this.hireDate = Date.from(Instant.now());
+    }
+
+    public Employee(String firstName, String lastName, String email, String password, Department department) {
+        this();
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -221,6 +227,25 @@ public final class Employee extends IndexedSerDesable<Employee> {
      */
     public boolean authenticate(final String password) {
         return HASH_MANAGER.authenticate(this.password, password);
+    }
+
+    public List<MeetingRoomBooking> getBookings() {
+        final List<MeetingRoomBooking> bookings = new LinkedList<>();
+        final var database = DefaultDatabase.get();
+
+        try {
+            final var resultSet = database.select(MeetingRoomBooking.SER_DES.getTable(), MeetingRoomBooking.EMPLOYEE_FIELD.getName(), this.getId());
+
+            do {
+                bookings.add(MeetingRoomBooking.SER_DES.deserialise(database, resultSet));
+            } while (resultSet.next());
+        } catch (final NoSuchRowException e) {
+            return Collections.emptyList();
+        } catch (final SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return bookings;
     }
 
     @Override

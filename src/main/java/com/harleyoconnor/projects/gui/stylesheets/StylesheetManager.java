@@ -1,7 +1,7 @@
 package com.harleyoconnor.projects.gui.stylesheets;
 
 import com.harleyoconnor.projects.os.SystemManager;
-import com.harleyoconnor.projects.util.Scheduler;
+import com.harleyoconnor.serdes.util.Scheduler;
 import javafx.collections.ObservableList;
 
 import java.time.Duration;

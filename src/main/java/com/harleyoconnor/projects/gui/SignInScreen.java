@@ -55,7 +55,7 @@ public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
             return;
         }
 
-        final var employee = Employee.fromEmail(Projects.getDatabase(), email);
+        final var employee = Employee.fromEmail(email);
         final var password = this.passwordField.get().getText();
 
         if (!employee.authenticate(password)) {
