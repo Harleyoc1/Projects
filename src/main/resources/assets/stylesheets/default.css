@@ -11,13 +11,44 @@
 }
 
 .title {
-    -fx-font-size: 20;
+    -fx-font-size: 22;
+}
+
+.subtitle {
+    -fx-font-size: 18;
 }
 
 .body {
     -fx-font-size: 14;
 }
 
+.sub-body {
+    -fx-font-size: 10;
+}
+
 .text {
     -fx-text-fill: #535657;
+}
+
+.grey-text {
+    -fx-text-fill: #7C8081; /* +25% of #535657 */
+}
+
+.column {
+    -fx-background-color: #F4FAFF;
+    /*-fx-background-radius: 10px;*/
+}
+
+.cell {
+    -fx-background-color: #DEE7E7;
+    -fx-border-color: #9E91BE; /* -12.5% of #B7ADCF */
+}
+
+/* TODO: Common stylesheet. */
+.no-background {
+    -fx-background-color: none;
+}
+
+.no-border {
+    -fx-border-width: 0;
 }

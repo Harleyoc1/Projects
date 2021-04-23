@@ -2,6 +2,7 @@ package com.harleyoconnor.projects.gui.manipulator;
 
 import com.harleyoconnor.projects.gui.util.InterfaceUtils;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 
@@ -37,6 +38,11 @@ public class HBoxManipulator<H extends HBox> extends PaneManipulator<H, HBoxMani
     public HBoxManipulator<H> spacing(int amount) {
         this.node.setSpacing(amount);
         return this;
+    }
+
+    @Override
+    protected void setMargin(Node node, Insets insets) {
+        HBox.setMargin(node, insets);
     }
 
     public static HBoxManipulator<HBox> create() {

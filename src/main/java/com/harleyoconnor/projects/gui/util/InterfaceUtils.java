@@ -100,4 +100,12 @@ public final class InterfaceUtils {
         return VBoxManipulator.create().add(nodes).padding(padding).spacing(spacing).centre().get();
     }
 
+    public static VBox wrapInMargin(final Node node) {
+        return VBoxManipulator.create().add(node).padding(Constants.DEFAULT_MARGIN).get();
+    }
+
+    public static VBox wrapInMargin(final Node node, final int margin) {
+        return VBoxManipulator.create().add(node).padding(margin).get();
+    }
+
 }

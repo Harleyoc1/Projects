@@ -14,6 +14,7 @@ import java.util.stream.Stream;
  *
  * @author Harley O'Connor
  */
+// TODO: Restructure themed stylesheets to update from `ThemedManager`.
 public final class StylesheetManager {
 
     /**
@@ -57,10 +58,8 @@ public final class StylesheetManager {
     }
 
     private void updateThemedStylesheets(SystemManager.Theme newTheme, ObservableList<String> stylesheetList, Set<Stylesheet> stylesheets) {
-        stylesheets.forEach(stylesheet -> {
-            if (stylesheet instanceof ThemedStylesheet)
-                ((ThemedStylesheet) stylesheet).themeChanged(stylesheetList, this.lastTheme, newTheme);
-        });
+        stylesheets.stream().filter(ThemedStylesheet.class::isInstance).forEach(stylesheet ->
+                ((ThemedStylesheet) stylesheet).themeChanged(stylesheetList, this.lastTheme, newTheme));
     }
 
 }

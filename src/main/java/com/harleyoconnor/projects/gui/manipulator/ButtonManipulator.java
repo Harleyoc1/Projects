@@ -3,7 +3,7 @@ package com.harleyoconnor.projects.gui.manipulator;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.ImageView;
 
 /**
  * A helper class that helps easily manipulate {@link Button} {@link Object}s by
@@ -30,6 +30,11 @@ public class ButtonManipulator<B extends Button> extends RegionManipulator<B, Bu
 
     public ButtonManipulator<B> onAction(EventHandler<ActionEvent> eventHandler) {
         this.node.setOnAction(eventHandler);
+        return this;
+    }
+
+    public ButtonManipulator<B> graphic(ImageView imageView) {
+        this.node.setGraphic(imageView);
         return this;
     }
 

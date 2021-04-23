@@ -7,12 +7,16 @@ import com.harleyoconnor.serdes.field.ForeignField;
 import com.harleyoconnor.serdes.field.ImmutableForeignField;
 import com.harleyoconnor.serdes.field.PrimaryField;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * @author Harley O'Connor
  */
 public final class MeetingRoomBooking extends IndexedSerDesable<MeetingRoomBooking> {
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm dd/MM/yyyy");
 
     public static final PrimaryField<MeetingRoomBooking, Integer> PRIMARY_FIELD = createPrimaryField(MeetingRoomBooking.class);
     public static final ForeignField<MeetingRoomBooking, Integer, Employee> EMPLOYEE_FIELD = new ImmutableForeignField<>("employee", MeetingRoomBooking.class,
@@ -66,6 +70,16 @@ public final class MeetingRoomBooking extends IndexedSerDesable<MeetingRoomBooki
      */
     public Date getTime() {
         return this.time;
+    }
+
+    /**
+     * Gets the {@link #time} for this {@link MeetingRoomBooking} object,
+     * formatted according to {@link #DATE_FORMAT}.
+     *
+     * @return The {@link #time} for this {@link MeetingRoomBooking} object.
+     */
+    public String getTimeFormatted() {
+        return DATE_FORMAT.format(this.time);
     }
 
     /**

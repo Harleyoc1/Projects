@@ -29,7 +29,7 @@ public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
         super(stage, scene, parentView, previousScreen, "Sign In");
 
         // Sets up the layout.
-        this.layout.add(VBoxManipulator.create().add(LabelManipulator.create().text("Sign In").title().wrapText(), this.emailField, this.passwordField,
+        this.layout.add(VBoxManipulator.create().add(LabelManipulator.create().text("Sign In").subtitle().wrapText(), this.emailField, this.passwordField,
                 HBoxManipulator.create().add(RegionManipulator.horizontalSpacer(),
                         ButtonManipulator.create().border().background().body().text("Sign In").onAction(this::onSignInPress)),
                 this.errorLabel).spacing().fixWidth(300).padding(25).centre()).centre();
@@ -65,6 +65,7 @@ public final class SignInScreen extends Screen<HBox, HBoxManipulator<HBox>> {
         }
 
         Projects.INSTANCE.signIn(employee);
+        this.toNewScreen(new DashboardScreen(this.stage, this.scene, this.parentView, this, employee));
     }
 
 }

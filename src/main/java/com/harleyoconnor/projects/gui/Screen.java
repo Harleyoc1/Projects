@@ -170,4 +170,13 @@ public abstract class Screen<P extends Pane, PM extends PaneManipulator<P, PM>> 
         newScreen.onSlideInFinished(event);
     }
 
+    /**
+     * Gets the {@link #title} for this {@link Screen} object.
+     *
+     * @return The {@link #title} for this {@link Screen} object.
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
 }

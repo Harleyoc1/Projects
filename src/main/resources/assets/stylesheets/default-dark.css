@@ -14,10 +14,42 @@
     -fx-font-size: 20;
 }
 
+.subtitle {
+    -fx-font-size: 18;
+}
+
 .body {
     -fx-font-size: 14;
+}
+
+.sub-body {
+    -fx-font-size: 10;
 }
 
 .text {
     -fx-text-fill: #DEE7E7;
 }
+
+.grey-text {
+    -fx-text-fill: #A8AAAB /* +50% of #535657 */;
+}
+
+.column {
+    -fx-background-color: #535657;
+    /*-fx-background-radius: 8px;*/
+}
+
+.cell {
+    -fx-background-color: #4F646F;
+    -fx-border-color: #9E91BE; /* -12.5% of #B7ADCF */
+}
+
+/* TODO: Common stylesheet. */
+.no-background {
+    -fx-background-color: none;
+}
+
+.no-border {
+    -fx-border-width: 0;
+}
+

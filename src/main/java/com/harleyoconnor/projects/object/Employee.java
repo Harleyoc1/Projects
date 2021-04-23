@@ -5,14 +5,10 @@ import com.harleyoconnor.serdes.ClassSerDes;
 import com.harleyoconnor.serdes.IndexedSerDesable;
 import com.harleyoconnor.serdes.SerDes;
 import com.harleyoconnor.serdes.database.DefaultDatabase;
-import com.harleyoconnor.serdes.exception.NoSuchRowException;
 import com.harleyoconnor.serdes.field.*;
 
-import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -92,7 +88,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #firstName} for this {@link Employee} object
-     * to the given {@code firstName}.
+     * to the specified {@code firstName}.
      *
      * @param firstName The new {@link String} object to set.
      * @return This {@link Employee} object for chaining.
@@ -113,7 +109,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #lastName} for this {@link Employee} object
-     * to the given {@code lastName}.
+     * to the specified {@code lastName}.
      *
      * @param lastName The new {@link String} object to set.
      * @return This {@link Employee} object for chaining.
@@ -134,7 +130,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #email} for this {@link Employee} object
-     * to the given {@code email}.
+     * to the specified {@code email}.
      *
      * @param email The new {@link String} object to set.
      * @return This {@link Employee} object for chaining.
@@ -155,13 +151,25 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #password} for this {@link Employee} object
-     * to the given {@code password}.
+     * to the specified {@code password}.
      *
      * @param password The new {@link String} object to set.
      * @return This {@link Employee} object for chaining.
      */
     public Employee setPassword(String password) {
         this.password = password;
+        return this;
+    }
+
+    /**
+     * Sets the {@link #password} for this {@link Employee} object
+     * to the specified {@code password}, hashed.
+     *
+     * @param password The new {@link String} object to set.
+     * @return This {@link Employee} object for chaining.
+     */
+    public Employee hashAndSetPassword(String password) {
+        this.password = HASH_MANAGER.hash(password);
         return this;
     }
 
@@ -176,7 +184,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #wage} for this {@link Employee} object
-     * to the given {@code wage}.
+     * to the specified {@code wage}.
      *
      * @param wage The new {@code double} to set.
      * @return This {@link Employee} object for chaining.
@@ -197,7 +205,7 @@ public final class Employee extends IndexedSerDesable<Employee> {
 
     /**
      * Sets the {@link #department} for this {@link Employee} object
-     * to the given {@code department}.
+     * to the specified {@code department}.
      *
      * @param department The new {@link Department} object to set.
      * @return This {@link Employee} object for chaining.
@@ -229,23 +237,16 @@ public final class Employee extends IndexedSerDesable<Employee> {
         return HASH_MANAGER.authenticate(this.password, password);
     }
 
+    /**
+     * Returns a {@link List} of all {@link MeetingRoomBooking}s this {@link Employee}
+     * has booked.
+     *
+     * @return A {@link List} of {@link MeetingRoomBooking}s this {@link Employee} has
+     *         booked.
+     */
     public List<MeetingRoomBooking> getBookings() {
-        final List<MeetingRoomBooking> bookings = new LinkedList<>();
-        final var database = DefaultDatabase.get();
-
-        try {
-            final var resultSet = database.select(MeetingRoomBooking.SER_DES.getTable(), MeetingRoomBooking.EMPLOYEE_FIELD.getName(), this.getId());
-
-            do {
-                bookings.add(MeetingRoomBooking.SER_DES.deserialise(database, resultSet));
-            } while (resultSet.next());
-        } catch (final NoSuchRowException e) {
-            return Collections.emptyList();
-        } catch (final SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return bookings;
+        return DefaultDatabase.get().selectAllUnchecked(MeetingRoomBooking.SER_DES,
+                MeetingRoomBooking.EMPLOYEE_FIELD.getName(), this.getId());
     }
 
     @Override

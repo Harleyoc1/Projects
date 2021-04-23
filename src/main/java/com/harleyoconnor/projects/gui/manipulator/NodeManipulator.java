@@ -32,7 +32,7 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
     }
 
     /**
-     * Adds border style class to the {@link Node}.
+     * Adds the {@code border} style class to the {@link Node}.
      *
      * @return This {@link Node} builder.
      */
@@ -41,7 +41,16 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
     }
 
     /**
-     * Adds background style class to the {@link Node}.
+     * Adds the {@code no-border} style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM noBorder() {
+        return this.styleClasses(Constants.NO_BORDER);
+    }
+
+    /**
+     * Adds the {@code background} style class to the {@link Node}.
      *
      * @return This {@link Node} builder.
      */
@@ -50,7 +59,16 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
     }
 
     /**
-     * Adds title style class to the {@link Node}.
+     * Adds the {@code no-background} style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM noBackground() {
+        return this.styleClasses(Constants.NO_BACKGROUND);
+    }
+
+    /**
+     * Adds the {@code title} style class to the {@link Node}.
      *
      * @return This {@link Node} builder.
      */
@@ -59,12 +77,39 @@ public abstract class NodeManipulator<N extends Node, NM extends NodeManipulator
     }
 
     /**
-     * Adds body style class to the {@link Node}.
+     * Adds the {@code subtitle} style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM subtitle() {
+        return this.styleClasses(Constants.SUBTITLE, Constants.TEXT);
+    }
+
+    /**
+     * Adds the {@code body} style class to the {@link Node}.
      *
      * @return This {@link Node} builder.
      */
     public NM body() {
         return this.styleClasses(Constants.BODY, Constants.TEXT);
+    }
+
+    /**
+     * Adds the {@code sub-body} style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM subBody() {
+        return this.styleClasses(Constants.SUB_BODY, Constants.TEXT);
+    }
+
+    /**
+     * Adds the {@code grey-text} style class to the {@link Node}.
+     *
+     * @return This {@link Node} builder.
+     */
+    public NM greyText() {
+        return this.styleClasses(Constants.GREY_TEXT, Constants.TEXT);
     }
 
     /**

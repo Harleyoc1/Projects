@@ -19,12 +19,17 @@ public final class Constants {
     ////////////////////////////////////////////////
 
     public static final String BORDER = "border";
+    public static final String NO_BORDER = "no-border";
     public static final String BACKGROUND = "background";
+    public static final String NO_BACKGROUND = "no-background";
 
     public static final String TITLE = "title";
+    public static final String SUBTITLE = "subtitle";
     public static final String BODY = "body";
+    public static final String SUB_BODY = "sub-body";
 
     public static final String TEXT = "text";
+    public static final String GREY_TEXT = "grey-text";
 
     ////////////////////////////////////////////////
     // Layouts
@@ -37,5 +42,6 @@ public final class Constants {
 
     public static final int DEFAULT_SPACING = 5;
     public static final int DEFAULT_PADDING = 15;
+    public static final int DEFAULT_MARGIN = 15;
 
 }

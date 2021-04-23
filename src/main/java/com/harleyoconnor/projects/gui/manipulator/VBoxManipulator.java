@@ -2,6 +2,7 @@ package com.harleyoconnor.projects.gui.manipulator;
 
 import com.harleyoconnor.projects.gui.util.InterfaceUtils;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
@@ -37,6 +38,11 @@ public class VBoxManipulator<V extends VBox> extends PaneManipulator<V, VBoxMani
     public VBoxManipulator<V> spacing(int amount) {
         this.node.setSpacing(amount);
         return this;
+    }
+
+    @Override
+    protected void setMargin(Node node, Insets insets) {
+        VBox.setMargin(node, insets);
     }
 
     public static VBoxManipulator<VBox> create() {

@@ -1,5 +1,6 @@
 package com.harleyoconnor.projects.gui.manipulator;
 
+import com.harleyoconnor.projects.Constants;
 import com.harleyoconnor.projects.gui.util.InterfaceUtils;
 import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
@@ -29,7 +30,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @return This {@link Region} builder.
      */
     public RM padding() {
-        return this.padding(15);
+        return this.padding(Constants.DEFAULT_PADDING);
     }
 
     /**
@@ -38,7 +39,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param topRightBottomLeft The amount of padding to apply to the top, right, bottom, and left.
      * @return This {@link Region} builder.
      */
-    public RM padding(int topRightBottomLeft) {
+    public RM padding(double topRightBottomLeft) {
         return this.padding(topRightBottomLeft, topRightBottomLeft, topRightBottomLeft, topRightBottomLeft);
     }
 
@@ -51,7 +52,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param left The amount of padding to apply to the left.
      * @return This {@link Region} builder.
      */
-    public RM padding(int top, int right, int bottom, int left) {
+    public RM padding(double top, double right, double bottom, double left) {
         this.node.setPadding(new Insets(top, right, bottom, left));
         return (RM) this;
     }
@@ -62,7 +63,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param width The width to set as a minimum.
      * @return This {@link Region} builder.
      */
-    public RM minWidth (int width) {
+    public RM minWidth (double width) {
         this.node.setMinWidth(width);
         return (RM) this;
     }
@@ -73,7 +74,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to set as a minimum.
      * @return This {@link Region} builder.
      */
-    public RM minHeight (int height) {
+    public RM minHeight (double height) {
         this.node.setMinHeight(height);
         return (RM) this;
     }
@@ -84,7 +85,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param widthHeight The height and width to set as a minimum.
      * @return This {@link Region} builder.
      */
-    public RM minWidthHeight (int widthHeight) {
+    public RM minWidthHeight (double widthHeight) {
         this.maxWidth(widthHeight);
         return this.maxHeight(widthHeight);
     }
@@ -96,7 +97,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to set as a minimum.
      * @return This {@link Region} builder.
      */
-    public RM minWidthHeight (int width, int height) {
+    public RM minWidthHeight (double width, double height) {
         this.maxWidth(width);
         return this.maxHeight(height);
     }
@@ -107,7 +108,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param width The width to set as a maximum.
      * @return This {@link Region} builder.
      */
-    public RM maxWidth (int width) {
+    public RM maxWidth (double width) {
         this.node.setMaxWidth(width);
         return (RM) this;
     }
@@ -118,7 +119,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to set as a maximum.
      * @return This {@link Region} builder.
      */
-    public RM maxHeight (int height) {
+    public RM maxHeight (double height) {
         this.node.setMaxHeight(height);
         return (RM) this;
     }
@@ -129,7 +130,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param widthHeight The height and width to set as a maximum.
      * @return This {@link Region} builder.
      */
-    public RM maxWidthHeight (int widthHeight) {
+    public RM maxWidthHeight (double widthHeight) {
         this.maxWidth(widthHeight);
         return this.maxHeight(widthHeight);
     }
@@ -141,7 +142,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to set as a maximum.
      * @return This {@link Region} builder.
      */
-    public RM maxWidthHeight (int width, int height) {
+    public RM maxWidthHeight (double width, double height) {
         this.maxWidth(width);
         return this.maxHeight(height);
     }
@@ -152,7 +153,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param width The width to fix.
      * @return This {@link Region} builder.
      */
-    public RM fixWidth (int width) {
+    public RM fixWidth (double width) {
         this.node.setMinWidth(width);
         this.node.setMaxWidth(width);
         return (RM) this;
@@ -164,7 +165,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to fix.
      * @return This {@link Region} builder.
      */
-    public RM fixHeight (int height) {
+    public RM fixHeight (double height) {
         this.node.setMinHeight(height);
         this.node.setMaxHeight(height);
         return (RM) this;
@@ -176,7 +177,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param widthAndHeight The height and width to fix.
      * @return This {@link Region} builder.
      */
-    public RM fixWidthHeight (int widthAndHeight) {
+    public RM fixWidthHeight (double widthAndHeight) {
         return this.fixWidthHeight(widthAndHeight, widthAndHeight);
     }
 
@@ -187,7 +188,7 @@ public class RegionManipulator<R extends Region, RM extends RegionManipulator<R,
      * @param height The height to fix.
      * @return This {@link Region} builder.
      */
-    public RM fixWidthHeight (int width, int height) {
+    public RM fixWidthHeight (double width, double height) {
         this.fixWidth(width);
         return this.fixHeight(height);
     }

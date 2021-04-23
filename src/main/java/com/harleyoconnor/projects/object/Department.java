@@ -4,12 +4,8 @@ import com.harleyoconnor.serdes.ClassSerDes;
 import com.harleyoconnor.serdes.IndexedSerDesable;
 import com.harleyoconnor.serdes.SerDes;
 import com.harleyoconnor.serdes.database.DefaultDatabase;
-import com.harleyoconnor.serdes.exception.NoSuchRowException;
 import com.harleyoconnor.serdes.field.PrimaryField;
 
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -50,7 +46,7 @@ public final class Department extends IndexedSerDesable<Department> {
 
     /**
      * Sets the {@link #name} for this {@link Department} object
-     * to the given {@code name}.
+     * to the specified {@code name}.
      *
      * @param name The new {@link String} object to set.
      * @return This {@link Department} object for chaining.
@@ -71,7 +67,7 @@ public final class Department extends IndexedSerDesable<Department> {
 
     /**
      * Sets the {@link #head} for this {@link Department} object
-     * to the given {@code head}.
+     * to the specified {@code head}.
      *
      * @param head The new {@link Employee} object to set.
      * @return This {@link Department} object for chaining.
@@ -81,24 +77,15 @@ public final class Department extends IndexedSerDesable<Department> {
         return this;
     }
 
+    /**
+     * Returns a {@link List} of all {@link Employee}s who are part of this
+     * {@link Department}.
+     *
+     * @return A {@link List} of {@link Employee}s in this {@link Department}.
+     */
     public List<Employee> getEmployees() {
-        final List<Employee> employees = new LinkedList<>();
-        final var database = DefaultDatabase.get();
-
-        try {
-            final var resultSet = database.select(Employee.SER_DES.getTable(), Employee.DEPARTMENT_FIELD.getName(), this.getId());
-
-            do {
-                employees.add(Employee.SER_DES.deserialise(database, resultSet));
-            } while (resultSet.next());
-
-        } catch (final NoSuchRowException e) {
-            return Collections.emptyList();
-        } catch (final SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return employees;
+        return DefaultDatabase.get().selectAllUnchecked(Employee.SER_DES,
+                Employee.DEPARTMENT_FIELD.getName(), this.getId());
     }
 
     @Override

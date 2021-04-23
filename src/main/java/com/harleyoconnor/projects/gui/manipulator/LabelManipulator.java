@@ -1,5 +1,6 @@
 package com.harleyoconnor.projects.gui.manipulator;
 
+import com.harleyoconnor.projects.Constants;
 import javafx.scene.control.Label;
 
 /**
@@ -31,7 +32,11 @@ public class LabelManipulator<L extends Label> extends RegionManipulator<L, Labe
     }
 
     public static LabelManipulator<Label> create() {
-        return new LabelManipulator<>();
+        return new LabelManipulator<>().styleClasses(Constants.TEXT);
+    }
+
+    public static LabelManipulator<Label> create(final String text) {
+        return create().text(text);
     }
 
     public static <L extends Label> LabelManipulator<L> of(final L label) {

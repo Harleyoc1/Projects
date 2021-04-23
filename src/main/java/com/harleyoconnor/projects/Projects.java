@@ -1,5 +1,7 @@
 package com.harleyoconnor.projects;
 
+import com.harleyoconnor.projects.gui.DashboardScreen;
+import com.harleyoconnor.projects.gui.Screen;
 import com.harleyoconnor.projects.gui.SignInScreen;
 import com.harleyoconnor.projects.gui.manipulator.SceneManipulator;
 import com.harleyoconnor.projects.gui.manipulator.StackPaneManipulator;
@@ -76,7 +78,7 @@ public final class Projects extends Application {
 //
 //        final var department = new Department().setName("Software Department");
 //        final var employee = new Employee().setFirstName("Harley").setLastName("O'Connor")
-//                .setEmail("thisismyemail@gmail.com").setPassword("secure").setWage(20.45);
+//                .setEmail("thisismyemail@gmail.com").hashAndSetPassword("secure").setWage(20.45);
 //
 //        employee.serialise();
 //        department.setHead(employee);
@@ -96,7 +98,13 @@ public final class Projects extends Application {
 //        bookings.forEach(System.out::println);
 
         // Create and show the sign in screen.
-        new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
+//        new SignInScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null).show();
+        this.showInitialScreen(new DashboardScreen(this.primaryStage, this.primaryScene, this.primaryView.toPaneManipulator(), null, Employee.fromEmail("thisismyemail@gmail.com")));
+    }
+
+    private void showInitialScreen(final Screen<?, ?> screen) {
+        screen.show();
+        this.primaryStage.title(screen.getTitle());
     }
 
     /**

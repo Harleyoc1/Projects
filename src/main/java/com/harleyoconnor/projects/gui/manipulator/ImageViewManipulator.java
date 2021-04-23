@@ -36,6 +36,16 @@ public class ImageViewManipulator<I extends ImageView> extends NodeManipulator<I
         return this;
     }
 
+    public ImageViewManipulator<I> smooth() {
+        this.node.setSmooth(true);
+        return this;
+    }
+
+    public ImageViewManipulator<I> cache() {
+        this.node.setCache(true);
+        return this;
+    }
+
     public static ImageViewManipulator<ImageView> create() {
         return new ImageViewManipulator<>(new ImageView());
     }

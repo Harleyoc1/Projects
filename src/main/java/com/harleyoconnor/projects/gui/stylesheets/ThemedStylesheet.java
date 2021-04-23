@@ -3,6 +3,7 @@ package com.harleyoconnor.projects.gui.stylesheets;
 import com.harleyoconnor.projects.os.SystemManager;
 import javafx.collections.ObservableList;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Objects;
  *
  * @author Harley O'Connor
  */
+// TODO: Restructure to implement `Themed`.
 public final class ThemedStylesheet extends Stylesheet {
 
     private static final String DEFAULT_DARK_SUFFIX = "-dark";
@@ -64,16 +66,17 @@ public final class ThemedStylesheet extends Stylesheet {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(@Nullable final Object obj) {
+        if (this == obj)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (obj == null || this.getClass() != obj.getClass())
             return false;
-        if (!super.equals(o))
+        if (!super.equals(obj))
             return false;
 
-        final ThemedStylesheet that = (ThemedStylesheet) o;
-        return this.mutuallyExclusive == that.mutuallyExclusive && Objects.equals(this.darkPath, that.darkPath);
+        final ThemedStylesheet that = (ThemedStylesheet) obj;
+        return this.mutuallyExclusive == that.mutuallyExclusive &&
+                Objects.equals(this.darkPath, that.darkPath);
     }
 
     @Override
